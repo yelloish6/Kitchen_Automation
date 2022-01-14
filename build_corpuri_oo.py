@@ -31,6 +31,9 @@ class placa_pal:
     def getPlaca(self):
         return [["pal", self.label, self.length, self.width, self.thick] + self.cant + [self.obs]]
 
+    def getPlacaOO(self):
+        return self
+
     def addObs(self, text):
         self.obs = self.obs + text
 
@@ -935,8 +938,8 @@ class comanda:
         # 2h per corp asamblare, pozitionare si montaj fronturi
         # 4h montaj electrocasnice
         # 0.5h pe metru de blat, montaj blat
-        self.cost_pal = math.ceil(self.m2pal / (2800 * 2070 / 1000000)) * self.price_pal
-        self.cost_pfl = math.ceil(self.m2pfl / (2800 * 2070 / 1000000)) * self.price_pfl
+        self.cost_pal = math.ceil(self.m2pal / 5.3) * self.price_pal #5,3 e suprafata aprox ce poate fi utilizata dint-o placa de pal
+        self.cost_pfl = math.ceil(self.m2pfl / 5.3) * self.price_pfl #5,3 e suprafata aprox ce poate fi utilizata dint-o placa de pal
         self.cost_front = math.ceil(self.m2front) * self.price_front
         self.cost_blat = math.ceil(self.m_blat) * self.price_blat
         self.cost_cant[0] = math.ceil(self.m_cant[0]) * self.price_cant[0]
@@ -1005,6 +1008,33 @@ class comanda:
             # total
             for i in range(len(self.acc)):
                 comanda_writer.writerow(self.acc[i])
+
+        Opticut_Limit = 50
+        name = "PannelsCuttingList_pal_" + self.client + ".csv"
+        mobila = self.corpuri
+        with open(name, mode='w') as comanda_pal:
+            comanda_writer = csv.writer(comanda_pal, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            # comanda_writer.writerow(["N",self.client])
+            # comanda_writer.writerow(["M", "PAL ALB 18"])
+            # comanda_writer.writerow(["@", "Length", "Width", "Quantity"])
+            # comanda_writer.writerow(["S", 2800, 2070, ""])
+            # comanda_writer.writerow(["K", 2])
+            # comanda_writer.writerow(["@", "Length", "Width", "Quantity","Label","Can turn"])
+            comanda_writer.writerow(["Length", "Width", "Qty","Enabled"])
+            # pe corpuri
+            for i in range(len(mobila)):
+                p = mobila[i].getPal()
+                for j in range(len(p)):
+                    placa = p[j]
+                    length = placa[2]
+                    width = placa[3]
+                    label = placa[1]
+                    comanda_writer.writerow([length, width, 1, "TRUE"])
+                    # comanda_writer.writerow([length, width, "1", "", "", "", "-1", "", "", "", "", "", "", ""])
+                    # comanda_writer.writerow(["P", length, width, 1, label, "y"])
+
+
+
 
     def draw(self, ox, oy, oz):
         ofset = 0
