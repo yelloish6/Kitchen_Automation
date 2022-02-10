@@ -4,7 +4,6 @@ import csv
 import math
 from export_stl import *
 
-
 class placa_pal:
     def __init__(self, label, L, l, w_pal, cant_L1, cant_L2, cant_l1, cant_l2):
         self.label = label
@@ -17,6 +16,7 @@ class placa_pal:
 
         length_cant04 = 0
         length_cant2 = 0
+
         for i in range(2):
             if self.cant[i] == 0.4:
                 length_cant04 = length_cant04 + self.length
@@ -372,14 +372,14 @@ class corp:
             print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
         self.addPalObject(jos)
         jos.move("y", -cut_depth)
-        lat1 = placa_pal(self.label + ".lat1", self.depth - cut_depth, self.height - self.pal_width, self.pal_width,
+        lat1 = placa_pal(self.label + ".lat1", self.height - self.pal_width, self.depth - cut_depth,  self.pal_width,
                          self.cant_lab, "", "", "")
         self.addPalObject(lat1)
         lat1.rotate("x")
         lat1.move("z", self.pal_width)
         lat1.move("y", -cut_depth)
 
-        lat2 = placa_pal(self.label + ".lat2", self.width - cut_width, self.height - self.pal_width, self.pal_width,
+        lat2 = placa_pal(self.label + ".lat2", self.height - self.pal_width, self.width - cut_width,  self.pal_width,
                          self.cant_lab, "", "", "")
         self.addPalObject(lat2)
         lat2.rotate("x")
@@ -719,13 +719,13 @@ class corp:
         self.addPalObject(jos)
 
         lat1 = placa_pal(self.label + ".lat", self.height - self.pal_width, self.depth + gap_heat, self.pal_width,
-                         self.cant_lab, self.cant_lab, "", "")
+                         self.cant_lab, "", self.cant_lab, "")
         lat1.rotate("y")
         lat1.move("z", jos.thick)
         self.addPalObject(lat1)
 
         lat2 = placa_pal(self.label + ".lat", self.height - self.pal_width, self.depth + gap_heat, self.pal_width,
-                         self.cant_lab, self.cant_lab, "", "")
+                         self.cant_lab, "", self.cant_lab, "")
         lat2.rotate("y")
         lat2.move("z", jos.thick)
         lat2.move("x", jos.length - lat2.thick)
