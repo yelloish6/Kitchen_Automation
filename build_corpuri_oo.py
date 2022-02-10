@@ -2,6 +2,7 @@
 # documentatie
 import csv
 import math
+import os
 from export_stl import *
 
 class placa_pal:
@@ -376,6 +377,7 @@ class corp:
                          self.cant_lab, "", "", "")
         self.addPalObject(lat1)
         lat1.rotate("x")
+        lat1.rotate("y")
         lat1.move("z", self.pal_width)
         lat1.move("y", -cut_depth)
 
@@ -383,6 +385,7 @@ class corp:
                          self.cant_lab, "", "", "")
         self.addPalObject(lat2)
         lat2.rotate("x")
+        lat2.rotate("y")
         lat2.rotate("z")
         lat2.move("z", self.pal_width)
         lat2.move("x", jos.length - self.pal_width)
@@ -966,7 +969,15 @@ class comanda:
             self.priceList.append(item, price)
 
     def export_csv(self):
-        name = "comanda_pal_" + self.client + ".csv"
+        #create folder with customer name if it doesn't exist
+        folder_name = "Comanda " + self.client
+        isExist = os.path.exists(folder_name)
+
+        if not isExist:
+            os.mkdir(folder_name)
+
+        #output comanda pal
+        name = os.path.join(folder_name, "comanda_pal_" + self.client + ".csv")
         mobila = self.corpuri
         with open(name, mode='w') as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -975,7 +986,9 @@ class comanda:
                 p = mobila[i].getPal()
                 for j in range(len(p)):
                     comanda_writer.writerow(p[j])
-        name = "comanda_pfl_" + self.client + ".csv"
+
+        #output comanda pfl
+        name = os.path.join(folder_name, "comanda_pfl_" + self.client + ".csv")
         mobila = self.corpuri
         with open(name, mode='w') as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -984,7 +997,9 @@ class comanda:
                 p = mobila[i].getPFL()
                 for j in range(len(p)):
                     comanda_writer.writerow(p[j])
-        name = "comanda_front_" + self.client + ".csv"
+
+        #output comanda fronturi
+        name = os.path.join(folder_name, "comanda_front_" + self.client + ".csv")
         mobila = self.corpuri
         with open(name, mode='w') as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -995,7 +1010,8 @@ class comanda:
                 for j in range(len(p)):
                     comanda_writer.writerow(p[j])
 
-        name = "comanda_accesorii_" + self.client + ".csv"
+        #output comanda accesorii
+        name = os.path.join(folder_name, "comanda_accesorii_" + self.client + ".csv")
         mobila = self.corpuri
         with open(name, mode='w') as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -1009,7 +1025,8 @@ class comanda:
             for i in range(len(self.acc)):
                 comanda_writer.writerow(self.acc[i])
 
-        name = "PannelsCuttingList_pal_" + self.client + ".csv"
+        #output pentru optimizare pal
+        name = os.path.join(folder_name, "PannelsCuttingList_pal_" + self.client + ".csv")
         mobila = self.corpuri
         with open(name, mode='w') as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -1032,7 +1049,8 @@ class comanda:
                     # comanda_writer.writerow([length, width, "1", "", "", "", "-1", "", "", "", "", "", "", ""])
                     # comanda_writer.writerow(["P", length, width, 1, label, "y"])
 
-        name = "PannelsCuttingList_pfl_" + self.client + ".csv"
+        #pentru optimizare PFL
+        name = os.path.join(folder_name, "PannelsCuttingList_pfl_" + self.client + ".csv")
         mobila = self.corpuri
         with open(name, mode='w') as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -1056,7 +1074,14 @@ class comanda:
                     # comanda_writer.writerow(["P", length, width, 1, label, "y"])
 
     def draw(self, ox, oy, oz):
+        folder_name = "Comanda " + self.client
+        isExist = os.path.exists(folder_name)
+
+        if not isExist:
+            os.mkdir(folder_name)
+
+        name = os.path.join(folder_name, "3D "+ self.client)
         ofset = 0
         for i in range(len(self.corpuri)):
-            self.corpuri[i].drawCorp(self.client, ox + ofset, oy, oz)
+            self.corpuri[i].drawCorp(name, ox + ofset, oy, oz)
             ofset = ofset + self.corpuri[i].width + 1
