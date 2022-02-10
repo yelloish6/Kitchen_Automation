@@ -1,40 +1,75 @@
 from build_corpuri_oo import *
+from input_Mirona import *
 
-# definitii bucatarie
-#	2490 inaltime totala pana in tavan
-#	faianta tavan 700?
-#	faianta de jos 1650
-
-h_bucatarie = 2240  # inaltimea maxima a mobilei, lasata cu 10mm mai jos sa avem overlap cu faianta
-h_faianta_top = 1650
-h_faianta_base = 850
-d_base = 600  # adancime blat jos
-
-# definitii mobila
-blat = 38
-picioare = 100
-gen_w = 600
-gap_spate = 50  # inca nefolosit
-gap_fata = 50  # inca nefolosit
-gen_cant = 0.4
-gen_cant_pol = 2
-gen_cant_sep = 0.4
-gen_gap_front = 2
-
-# top
-gen_h_top = 600
-gen_d_top = 300  # 300 plus 4 ca sa incapa intaritura in spatele hotei plus suruburile
-
-# base
-gen_h_base = 870 - blat - picioare
-gen_d_base = d_base - 50 - 50  # adancime totala, minus 5cm in fata, minus 5cm in spate
-
-# tower
-gen_h_tower = h_bucatarie - picioare
-gen_d_tower = gen_d_base + 50
-
-mobila = comanda("Mirona Urs", 100)
+mobila = comanda(nume_client, discount_manopera)
 mobila.__setattr__("frezare", "Gri Deschis Ultramat A71/P")
+
+for i in range(len(corpuri)):
+        c = corp(corpuri[i][1], corpuri[i][2], corpuri[i][3], corpuri[i][4], th_pal, corpuri[i][5])
+        if corpuri[i][0] == "buildBaseCorner":
+            c.buildBaseCorner(corpuri[i][3] - gen_d_base, corpuri[i][4] - gen_d_base, corpuri[i][6], th_front)
+        elif corpuri[i][0] == "buildBaseBox":
+            if corpuri[i][9] == "joly":
+                c.buildJolyBox()
+            elif corpuri[i][9] == "wine":
+                c.buildBaseBox()
+                c.addWineShelf(corpuri[i][10][0], corpuri[i][10][1], gen_cant_sep)
+            else:
+                c.buildBaseBox()
+                for j in range(len(corpuri[i][9])):
+                    c.addTandemBox(corpuri[i][9][j])
+            c.addPol(corpuri[i][6] ,gen_cant_pol)
+            c.addFront(corpuri[i][7], gen_gap_front, corpuri[i][8])
+        elif corpuri[i][0] == "buildMsVBox":
+            c.buildMsVBox()
+        elif corpuri[i][0] == "buildSinkBox":
+            c.buildSinkBox()
+            c.addFront(corpuri[i][7], gen_gap_front, corpuri[i][8])
+        elif corpuri[i][0] == "buildTopBox":
+            c.buildTopBox()
+            c.addPol(corpuri[i][6], gen_cant_pol)
+            c.addFront(corpuri[i][7], gen_gap_front, corpuri[i][8])
+        elif corpuri[i][0] == "buildTopCorner":
+            c.buildTopCorner(corpuri[i][3] - gen_d_top, corpuri[i][4] - gen_d_top, corpuri[i][6], th_front)
+        elif corpuri[i][0] == "buildTower":
+            c.buildTower(corpuri[i][7][0], corpuri[i][7][1], corpuri[i][7][2], corpuri[i][7][3])
+            c.addPol(corpuri[i][6], gen_cant_pol)
+            #Se seteaza fronturile pentru turn
+            #gap1
+            if (corpuri[i][8][0] == 1) and (corpuri[i][8][1] == 0):
+                    c.addFrontManual(corpuri[i][7][0] + (2 * th_pal) - 4, gen_w - 4)
+            if (corpuri[i][8][0] == 1) and (corpuri[i][8][1] == 1):
+                    c.addFrontManual(corpuri[i][7][0] + (1.5 * th_pal) - 3, gen_w - 4)
+            #gap2
+            if (corpuri[i][8][1] == 1) and (corpuri[i][8][0] == 0) and (corpuri[i][8][2] == 0):
+                    c.addFrontManual(corpuri[i][7][1] + (2 * th_pal) - 4, gen_w - 4)
+            if (((corpuri[i][8][1] == 1) and (corpuri[i][8][0] == 1) and (corpuri[i][8][2] == 0))
+                    or ((corpuri[i][8][1] == 1) and (corpuri[i][8][0] == 0) and (corpuri[i][8][2] == 1))):
+                    c.addFrontManual(corpuri[i][7][1] + (1.5 * th_pal) - 3, gen_w - 4)
+            if (corpuri[i][8][1] == 1) and (corpuri[i][8][0] == 1) and (corpuri[i][8][2] == 1):
+                c.addFrontManual(corpuri[i][7][1] + th_pal - 4, gen_w - 4)
+
+            #gap3
+            if (corpuri[i][8][2] == 1) and (corpuri[i][8][1] == 0) and (corpuri[i][8][3] == 0):
+                    c.addFrontManual(corpuri[i][7][2] + (2 * th_pal) - 4, gen_w - 4)
+            if (((corpuri[i][8][2] == 1) and (corpuri[i][8][1] == 1) and (corpuri[i][8][3] == 0))
+                    or ((corpuri[i][8][2] == 1) and (corpuri[i][8][1] == 0) and (corpuri[i][8][3] == 1))):
+                    c.addFrontManual(corpuri[i][7][2] + (1.5 * th_pal) - 3, gen_w - 4)
+            if (corpuri[i][8][2] == 1) and (corpuri[i][8][1] == 1) and (corpuri[i][8][3] == 1):
+                c.addFrontManual(corpuri[i][7][2] + th_pal - 4, gen_w - 4)
+
+            #gap4
+            if (corpuri[i][8][3] == 1) and (corpuri[i][8][2] == 0):
+                    c.addFrontManual(gen_h_tower - corpuri[i][7][0] - corpuri[i][7][1] - corpuri[i][7][2] - (3 * th_pal) - 4 , gen_w - 4)
+            if (corpuri[i][8][3] == 1) and (corpuri[i][8][2] == 1):
+                    c.addFrontManual(gen_h_tower - corpuri[i][7][0] - corpuri[i][7][1] - corpuri[i][7][2] - (3.5 * th_pal) - 3, gen_w - 4)
+        mobila.append(c)
+
+mobila.print_status()
+mobila.export_csv()
+mobila.draw(0, 0, 0)
+
+
 
 j1 = corp("J1", gen_h_base, 750 - 50, 1088 - 50, 18, gen_cant)
 j1.buildBaseCorner(150 + 50, 490 + 50, "left", 18)
@@ -163,9 +198,7 @@ i6.addWineShelf(5, "right", gen_cant_sep)
 i6.addFront([[100, 66]], 2, "door")
 mobila.append(i6)
 
-mobila.print_status()
-mobila.export_csv()
-mobila.draw(0, 0, 0)
+
 
 # verificari
 if h_bucatarie - gen_h_top < h_faianta_top:

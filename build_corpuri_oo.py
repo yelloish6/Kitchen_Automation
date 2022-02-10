@@ -796,7 +796,7 @@ class corp:
     ############
 
     def exportCSV(self, mobila):
-        with open('comanda_pal.csv', mode='w') as comanda_pal:
+        with open('comanda_pal.csv', mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for i in range(len(mobila)):
                 p = mobila[i].getPal()
@@ -979,7 +979,7 @@ class comanda:
         #output comanda pal
         name = os.path.join(folder_name, "comanda_pal_" + self.client + ".csv")
         mobila = self.corpuri
-        with open(name, mode='w') as comanda_pal:
+        with open(name, mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             comanda_writer.writerow(["tip", "eticheta", "lungime", "latime", "grosime", "L1", "L2", "l1", "l2"])
             for i in range(len(mobila)):
@@ -990,7 +990,7 @@ class comanda:
         #output comanda pfl
         name = os.path.join(folder_name, "comanda_pfl_" + self.client + ".csv")
         mobila = self.corpuri
-        with open(name, mode='w') as comanda_pal:
+        with open(name, mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             comanda_writer.writerow(["tip", "eticheta", "lungime", "latime"])
             for i in range(len(mobila)):
@@ -1001,7 +1001,7 @@ class comanda:
         #output comanda fronturi
         name = os.path.join(folder_name, "comanda_front_" + self.client + ".csv")
         mobila = self.corpuri
-        with open(name, mode='w') as comanda_pal:
+        with open(name, mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             comanda_writer.writerow(["tip", "eticheta", "lungime", "latime"])
             comanda_writer.writerow([self.__getattribute__("frezare")])
@@ -1013,7 +1013,7 @@ class comanda:
         #output comanda accesorii
         name = os.path.join(folder_name, "comanda_accesorii_" + self.client + ".csv")
         mobila = self.corpuri
-        with open(name, mode='w') as comanda_pal:
+        with open(name, mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             comanda_writer.writerow(["tip", "eticheta", "lungime", "latime", "grosime", "L1", "L2", "l1", "l2"])
             # pe corpuri
@@ -1028,7 +1028,7 @@ class comanda:
         #output pentru optimizare pal
         name = os.path.join(folder_name, "PannelsCuttingList_pal_" + self.client + ".csv")
         mobila = self.corpuri
-        with open(name, mode='w') as comanda_pal:
+        with open(name, mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # comanda_writer.writerow(["N",self.client])
             # comanda_writer.writerow(["M", "PAL ALB 18"])
@@ -1052,7 +1052,7 @@ class comanda:
         #pentru optimizare PFL
         name = os.path.join(folder_name, "PannelsCuttingList_pfl_" + self.client + ".csv")
         mobila = self.corpuri
-        with open(name, mode='w') as comanda_pal:
+        with open(name, mode='w', newline="") as comanda_pal:
             comanda_writer = csv.writer(comanda_pal, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             # comanda_writer.writerow(["N",self.client])
             # comanda_writer.writerow(["M", "PAL ALB 18"])
