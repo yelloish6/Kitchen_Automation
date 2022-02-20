@@ -2,8 +2,9 @@ from build_corpuri_oo import *
 from input_Mirona import *
 
 mobila = comanda(nume_client, discount_manopera)
-mobila.__setattr__("frezare", "Gri Deschis Ultramat A71/P")
+mobila.__setattr__("frezare", frezare_fronturi)
 
+"""
 for i in range(len(corpuri)):
         c = corp(corpuri[i][1], corpuri[i][2], corpuri[i][3], corpuri[i][4], th_pal, corpuri[i][5])
         if corpuri[i][0] == "buildBaseCorner":
@@ -70,14 +71,15 @@ mobila.export_csv()
 mobila.draw(0, 0, 0)
 
 
-
+"""
 j1 = corp("J1", gen_h_base, 750 - 50, 1088 - 50, 18, gen_cant)
-j1.buildBaseCorner(150 + 50, 490 + 50, "left", 18)
+j1.buildBaseCorner(750 - 50 - gen_d_base, 1088 - 50 - gen_d_base, "left", 18, True)
 mobila.append(j1)
 
 j2 = corp("J2", gen_h_base, gen_w, gen_d_base, 18, gen_cant)
 j2.buildBaseBox()
 j2.addPol(1, gen_cant_pol)
+j2.addSepH(j2.width-2*j2.pal_width,0, 100, gen_cant_sep)
 j2.addFront([[100, 100]], 2, "drawer")
 mobila.append(j2)
 
@@ -100,21 +102,19 @@ j5.buildSinkBox()
 j5.addFront([[100, 50], [100, 50]], 2, "door")
 mobila.append(j5)
 
-j5 = corp("J5", gen_h_base, gen_w, gen_d_base, 18, gen_cant)
-j5.buildMsVBox()
-mobila.append(j5)
-
-j6 = corp("j6", gen_h_base, 300, gen_d_base, 18, gen_cant)
-j6.buildJolyBox()
-j6.addFront([[100, 100]], 2, "door")
+j6 = corp("J6", gen_h_base, gen_w, gen_d_base, 18, gen_cant)
+j6.buildMsVBox()
 mobila.append(j6)
 
+j7 = corp("J7", gen_h_base, 300, gen_d_base, 18, gen_cant)
+j7.buildJolyBox()
+j7.addFront([[100, 100]], 2, "door")
+mobila.append(j7)
+
 t1 = corp("T1", gen_h_tower, 600, gen_d_tower, 18, gen_cant)
-t1.buildTower(gen_h_base - 2 * t1.pal_width, 590, 380, 40)
+t1.buildTower([gen_h_base - 2 * t1.pal_width, 590, 380], 40, [1, 0, 0, 1])
 # t1.addFront([[100,100]],2,"door")
 t1.addPol(1, gen_cant_pol)
-t1.addFrontManual(gen_h_base - 4, gen_w - 4)
-t1.addFrontManual(gen_h_tower - 4 - (3 * 2) - 390 - 595, gen_w - 4)
 
 mobila.append(t1)
 
@@ -130,7 +130,7 @@ mobila.append(s2)
 
 s3 = corp("s3", gen_h_top - 40, gen_w, gen_d_top, 18, gen_cant)
 s3.buildTopBox()
-s3.addFront([[100, 50], [100, 50]], 2, "door")
+s3.addFront([[100, 100]], 2, "door")
 mobila.append(s3)
 
 s4 = corp("s4", gen_h_top, 450, gen_d_top, 18, gen_cant)
@@ -147,7 +147,7 @@ mobila.append(s5)
 
 s6 = corp("s6", round(gen_h_top / 2), 1000, gen_d_top, 18, gen_cant)
 s6.buildTopBox()
-s6.addFront([[100, 50], [100, 50]], 2, "door")
+s6.addFront([[100, 100]], 2, "door")
 mobila.append(s6)
 
 s7 = corp("s7", gen_h_top, gen_w, gen_d_top, 18, gen_cant)
@@ -199,6 +199,10 @@ i6.addFront([[100, 66]], 2, "door")
 mobila.append(i6)
 
 
+
+mobila.print_status()
+mobila.export_csv()
+mobila.draw(0, 0, 0)
 
 # verificari
 if h_bucatarie - gen_h_top < h_faianta_top:

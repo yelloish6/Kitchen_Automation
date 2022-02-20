@@ -131,6 +131,7 @@ class corp:
             self.palOO.pop(remIndex[i])
             self.arch.pop(remIndex[i])
 
+    #TODO de transformat RemPal in RemPlaca de orice fel
     # TODO de scazut cantul cand se scoate o placa de pal
 
     def addLeg(self, leg_width, placa_cant):
@@ -208,6 +209,7 @@ class corp:
 
             sep.rotate("y")
             sep.move("x", self.pal_width + round(self.sep_space_w))
+            sep.move("z", self.pal_width)
             self.addAcces("surub", 4)
 
     def addWineShelf(self, goluri, left_right, cant):
@@ -346,7 +348,7 @@ class corp:
     # BUILD CORPURI#
     ################
 
-    def buildBaseCorner(self, cut_width, cut_depth, l_r, front_thick):
+    def buildBaseCorner(self, cut_width, cut_depth, l_r, front_thick, withPolita):
         #    o---------width----------|   o------width-----------
         #    |                        |   |                     |
         #    |     l_r="left"         |   |    l_r="right"      |
@@ -358,107 +360,192 @@ class corp:
         #    |        |                                 |       |
         #    ----------                                 ---------
         # include PFL si fronturi
-        jos = placa_pal(self.label + ".jos", self.width, self.depth, self.pal_width, "", "", "", "")
+
         if l_r == "left":
+            jos = placa_pal(self.label + ".jos", self.width, self.depth, self.pal_width, "", "", "", "")
             jos.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                        str(self.width) + ":" + str(self.depth - cut_depth) + ":" + str(cut_width) + "(cant " + str(
                 self.cant_lab) + "):" + str(cut_depth) +
                        "(cant " + str(self.cant_lab) + "):" + str(self.width - cut_width) + ":" + str(self.depth))
+            self.addPalObject(jos)
+            jos.move("y", -cut_depth)
+
+            lat1 = placa_pal(self.label + ".lat1", self.height - self.pal_width, self.depth - cut_depth, self.pal_width,
+                             self.cant_lab, "", "", "")
+            self.addPalObject(lat1)
+            lat1.rotate("x")
+            lat1.rotate("y")
+            lat1.rotate("z")
+            lat1.move("z", self.pal_width)
+            lat1.move("x", jos.length - self.pal_width)
+            lat1.move("y", cut_depth)
+            lat1.move("y", -cut_depth)
+
+            lat2 = placa_pal(self.label + ".lat2", self.height - self.pal_width, self.width - cut_width, self.pal_width,
+                             self.cant_lab, "", "", "")
+            self.addPalObject(lat2)
+
+            lat2.rotate("x")
+            lat2.rotate("y")
+            lat2.move("z", self.pal_width)
+            lat2.move("y", -cut_depth)
+
+            spate = placa_pal(self.label + ".spate", self.depth - self.pal_width, self.height - self.pal_width,
+                              self.pal_width, "", "", "", "")
+            self.addPalObject(spate)
+            spate.rotate("x")
+            spate.rotate("z")
+            spate.move("z", self.pal_width)
+            spate.move("y", self.pal_width)
+            spate.move("y", -cut_depth)
+
+            leg1 = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), 100, self.pal_width, self.cant_lab,
+                             "",
+                             "", "")
+            self.addPalObject(leg1)
+            leg1.move("z", self.height - self.pal_width)
+            leg1.move("x", self.pal_width)
+            leg1.move("y", self.depth - leg1.width)
+            leg1.move("y", -cut_depth)
+
+            leg2 = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), 100, self.pal_width, self.cant_lab,
+                             "",
+                             "", "")
+            self.addPalObject(leg2)
+            leg2.rotate("x")
+            leg2.move("z", self.height - leg2.width)
+            leg2.move("y", cut_depth)
+            leg2.move("x", self.pal_width)
+            leg2.move("y", -cut_depth)
+
+            leg3 = placa_pal(self.label + ".leg", cut_depth - self.pal_width, 100, self.pal_width, self.cant_lab, "",
+                             "",
+                             "")
+            self.addPalObject(leg3)
+            leg3.rotate("x")
+            leg3.rotate("z")
+            leg3.move("z", self.height - leg3.width)
+            leg3.move("x", self.width - cut_width - self.pal_width)
+            leg3.move("y", self.pal_width)
+            leg3.move("y", -cut_depth)
+
+            if withPolita:
+                pol = placa_pal(self.label + ".pol", self.width - (2 * self.pal_width), self.depth - (1 * self.pal_width),
+                                self.pal_width, "", "", "", "")
+
+                pol.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
+                           str(self.width - (2 * self.pal_width)) + ":" +
+                           str(self.depth - cut_depth - 20) + ":" +
+                           str(cut_width - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
+                           str(cut_depth - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
+                           str(self.width - cut_width - self.pal_width - 20) + ":" +
+                           str(self.depth - self.pal_width))
+
+                self.addPalObject(pol)
+                pol.move("x", self.pal_width)
+                pol.move("y", self.pal_width)
+                pol.move("z", int((self.height - self.pal_width) / 2))
+                pol.move("y", -cut_depth)
+
+            self.front = self.front + [["front", self.label + "_1", self.height - 4, cut_depth - 3 - front_thick]]
+            self.front = self.front + [["front", self.label + "_2", self.height - 4, cut_width - 3 - front_thick]]
+
         elif l_r == "right":
+            jos = placa_pal(self.label + ".jos", self.width, self.depth, self.pal_width, "", "", "", "")
             jos.addObs(str("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                            str(self.width) + ":" + str(self.depth) + ":" + str(self.width - cut_width) + ":" + str(
                 cut_depth) + "(cant " + str(self.cant_lab) + "):" +
                            str(cut_width) + "(cant " + str(self.cant_lab) + "):" + str(self.depth - cut_depth)))
+            self.addPalObject(jos)
+            jos.move("y", -cut_depth)
+
+            lat1 = placa_pal(self.label + ".lat1", self.height - self.pal_width, self.depth - cut_depth, self.pal_width,
+                             self.cant_lab, "", "", "")
+            self.addPalObject(lat1)
+            lat1.rotate("x")
+            lat1.rotate("y")
+            lat1.rotate("z")
+            lat1.move("z", self.pal_width)
+
+            lat2 = placa_pal(self.label + ".lat2", self.height - self.pal_width, self.width - cut_width, self.pal_width,
+                             self.cant_lab, "", "", "")
+            self.addPalObject(lat2)
+
+            lat2.rotate("x")
+            lat2.rotate("y")
+            lat2.move("z", self.pal_width)
+            lat2.move("y", -cut_depth)
+            lat2.move("x", cut_width)
+
+            spate = placa_pal(self.label + ".spate", self.depth - self.pal_width, self.height - self.pal_width,
+                              self.pal_width, "", "", "", "")
+            self.addPalObject(spate)
+            spate.rotate("x")
+            spate.rotate("z")
+            spate.move("z", self.pal_width)
+            spate.move("y", self.pal_width)
+            spate.move("y", -cut_depth)
+            spate.move("x", self.width - self.pal_width)
+
+            leg1 = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), 100, self.pal_width, self.cant_lab,
+                             "",
+                             "", "")
+            self.addPalObject(leg1)
+            leg1.move("z", self.height - self.pal_width)
+            leg1.move("x", self.pal_width)
+            leg1.move("y", self.depth - leg1.width)
+            leg1.move("y", -cut_depth)
+
+            leg2 = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), 100, self.pal_width, self.cant_lab,
+                             "",
+                             "", "")
+            self.addPalObject(leg2)
+            leg2.rotate("x")
+            leg2.move("z", self.height - leg2.width)
+            leg2.move("y", cut_depth)
+            leg2.move("x", self.pal_width)
+            leg2.move("y", -cut_depth)
+
+            leg3 = placa_pal(self.label + ".leg", cut_depth - self.pal_width, 100, self.pal_width, self.cant_lab, "",
+                             "",
+                             "")
+            self.addPalObject(leg3)
+            leg3.rotate("x")
+            leg3.rotate("z")
+            leg3.move("z", self.height - leg3.width)
+            leg3.move("x", cut_width)
+            leg3.move("y", self.pal_width)
+            leg3.move("y", -cut_depth)
+
+            if withPolita:
+                pol = placa_pal(self.label + ".pol", self.width - (2 * self.pal_width), self.depth - (1 * self.pal_width),
+                                self.pal_width, "", "", "", "")
+
+                pol.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
+                           str(self.width - (2 * self.pal_width)) + ":" +
+                           str(self.depth - self.pal_width) + ":" +
+                           str(self.width - cut_width - self.pal_width - 20) + ":" +
+                           str(cut_depth - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
+                           str(cut_width - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
+                           str(self.depth - cut_depth - 20) + ":")
+
+                self.addPalObject(pol)
+                pol.move("x", self.pal_width)
+                pol.move("y", self.pal_width)
+                pol.move("z", int((self.height - self.pal_width) / 2))
+                pol.move("y", -cut_depth)
+
+            self.front = self.front + [["front", self.label + "_1", self.height - 4, cut_depth - 3 - front_thick]]
+            self.front = self.front + [["front", self.label + "_2", self.height - 4, cut_width - 3 - front_thick]]
+
         else:
             print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
-        self.addPalObject(jos)
-        jos.move("y", -cut_depth)
-        lat1 = placa_pal(self.label + ".lat1", self.height - self.pal_width, self.depth - cut_depth,  self.pal_width,
-                         self.cant_lab, "", "", "")
-        self.addPalObject(lat1)
-        lat1.rotate("x")
-        lat1.rotate("y")
-        lat1.move("z", self.pal_width)
-        lat1.move("y", -cut_depth)
 
-        lat2 = placa_pal(self.label + ".lat2", self.height - self.pal_width, self.width - cut_width,  self.pal_width,
-                         self.cant_lab, "", "", "")
-        self.addPalObject(lat2)
-        lat2.rotate("x")
-        lat2.rotate("y")
-        lat2.rotate("z")
-        lat2.move("z", self.pal_width)
-        lat2.move("x", jos.length - self.pal_width)
-        lat2.move("y", cut_depth)
-        lat2.move("y", -cut_depth)
 
-        spate = placa_pal(self.label + ".spate", self.depth - self.pal_width, self.height - self.pal_width,
-                          self.pal_width, "", "", "", "")
-        self.addPalObject(spate)
-        spate.rotate("x")
-        spate.rotate("z")
-        spate.move("z", self.pal_width)
-        spate.move("y", self.pal_width)
-        spate.move("y", -cut_depth)
 
-        leg1 = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), 100, self.pal_width, self.cant_lab, "",
-                         "", "")
-        self.addPalObject(leg1)
-        leg1.move("z", self.height - self.pal_width)
-        leg1.move("x", self.pal_width)
-        leg1.move("y", self.depth - leg1.width)
-        leg1.move("y", -cut_depth)
 
-        leg2 = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), 100, self.pal_width, self.cant_lab, "",
-                         "", "")
-        self.addPalObject(leg2)
-        leg2.rotate("x")
-        leg2.move("z", self.height - leg2.width)
-        leg2.move("y", cut_depth)
-        leg2.move("x", self.pal_width)
-        leg2.move("y", -cut_depth)
 
-        leg3 = placa_pal(self.label + ".leg", cut_depth - self.pal_width, 100, self.pal_width, self.cant_lab, "", "",
-                         "")
-        self.addPalObject(leg3)
-        leg3.rotate("x")
-        leg3.rotate("z")
-        leg3.move("z", self.height - leg3.width)
-        leg3.move("x", self.width - cut_width - self.pal_width)
-        leg3.move("y", self.pal_width)
-        leg3.move("y", -cut_depth)
-
-        pol = placa_pal(self.label + ".pol", self.width - (2 * self.pal_width), self.depth - (1 * self.pal_width),
-                        self.pal_width, "", "", "", "")
-        if l_r == "left":
-            pol.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
-                       str(self.width - (2 * self.pal_width)) + ":" +
-                       str(self.depth - cut_depth - 20) + ":" +
-                       str(cut_width - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
-                       str(cut_depth - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
-                       str(self.width - cut_width - self.pal_width - 20) + ":" +
-                       str(self.depth - self.pal_width))
-        elif l_r == "right":
-            pol.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
-                       str(self.width - (2 * self.pal_width)) + ":" +
-                       str(self.depth - self.pal_width) + ":" +
-                       str(self.width - cut_width - self.pal_width - 20) + ":" +
-                       str(cut_depth - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
-                       str(cut_width - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
-                       str(self.depth - cut_depth - 20) + ":")
-        else:
-            print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
-
-        self.addPalObject(pol)
-        pol.move("x", self.pal_width)
-        pol.move("y", self.pal_width)
-        pol.move("z", int((self.height - self.pal_width) / 2))
-        pol.move("y", -cut_depth)
-
-        self.front = self.front + [["front", self.label + "_1", self.height - 4, cut_depth - 3 - front_thick]]
-        self.front = self.front + [["front", self.label + "_2", self.height - 4, cut_width - 3 - front_thick]]
-
-        self.addPFL()
+        #self.addPFL()
 
         self.addAcces("balama usa franta", 2)
         self.addAcces("balama 170 deg", 2)
@@ -474,19 +561,23 @@ class corp:
         self.addBlat((self.width + self.depth) / 1000)
 
     def buildTopCorner(self, cut_width, cut_depth, l_r, front_thick):
-        #    *******width**************
-        #    *                        *
-        #    *                        *
-        #    *                        *
-        #    depth                    *
-        #    *        ***cut_width*****
-        #    *        *
-        #    *        cut_depth
-        #    **********
 
-        jos = placa_pal(self.label + ".jos", self.width - self.pal_width, self.depth - self.pal_width, self.pal_width,
-                        "", "", "", "")
+        #    o---------width----------|   o------width-----------
+        #    |                        |   |                     |
+        #    |     l_r="left"         |   |    l_r="right"      |
+        #    |                        |   |                     |
+        #    depth                    |   |                     depth
+        #    |        ----cut_width----   --- cut_width--       |
+        #    |        |                                 |       |
+        #    |        cut_depth                  cut_depth      |
+        #    |        |                                 |       |
+        #    ----------                                 ---------
+        # include PFL si fronturi
         if l_r == "left":
+            # placa de jos
+            jos = placa_pal(self.label + ".jos", self.width - self.pal_width, self.depth - self.pal_width,
+                            self.pal_width,
+                            "", "", "", "")
             jos.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                        str(self.width - self.pal_width) + ":" +
                        str(self.depth - cut_depth) + ":" +
@@ -494,24 +585,13 @@ class corp:
                        str(cut_depth - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
                        str(self.width - cut_width) + ":" +
                        str(self.depth - self.pal_width))
-        elif l_r == "right":
-            jos.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
-                       str(self.width - self.pal_width) + ":" +
-                       str(self.depth - self.pal_width) + ":" +
-                       str(self.width - cut_width) + ":" +
-                       str(cut_depth - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
-                       str(cut_width - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
-                       str(self.depth - cut_depth) + ":")
-        else:
-            print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
-
-        self.addPalObject(jos)
-        jos.move("y", self.pal_width)
-        jos.move("y", -cut_depth)
-
-        sus = placa_pal(self.label + ".sus", self.width - self.pal_width, self.depth - self.pal_width, self.pal_width,
-                        "", "", "", "")
-        if l_r == "left":
+            self.addPalObject(jos)
+            jos.move("y", self.pal_width)
+            jos.move("y", -cut_depth)
+            #placa de sus
+            sus = placa_pal(self.label + ".sus", self.width - self.pal_width, self.depth - self.pal_width,
+                            self.pal_width,
+                            "", "", "", "")
             sus.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                        str(self.width - self.pal_width) + ":" +
                        str(self.depth - cut_depth) + ":" +
@@ -519,25 +599,14 @@ class corp:
                        str(cut_depth - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
                        str(self.width - cut_width) + ":" +
                        str(self.depth - self.pal_width))
-        elif l_r == "right":
-            sus.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
-                       str(self.width - self.pal_width) + ":" +
-                       str(self.depth - self.pal_width) + ":" +
-                       str(self.width - cut_width) + ":" +
-                       str(cut_depth - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
-                       str(cut_width - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
-                       str(self.depth - cut_depth) + ":")
-        else:
-            print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
+            self.addPalObject(sus)
+            sus.move("y", self.pal_width)
+            sus.move("z", self.height - self.pal_width)
+            sus.move("y", -cut_depth)
 
-        self.addPalObject(sus)
-        sus.move("y", self.pal_width)
-        sus.move("z", self.height - self.pal_width)
-        sus.move("y", -cut_depth)
+            pol = placa_pal(self.label + ".pol", self.width - (2 * self.pal_width), self.depth - (1 * self.pal_width),
+                            self.pal_width, "", "", "", "")
 
-        pol = placa_pal(self.label + ".pol", self.width - (2 * self.pal_width), self.depth - (1 * self.pal_width),
-                        self.pal_width, "", "", "", "")
-        if l_r == "left":
             pol.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                        str(self.width - (2 * self.pal_width)) + ":" +
                        str(self.depth - cut_depth - 20) + ":" +
@@ -545,7 +614,78 @@ class corp:
                        str(cut_depth - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
                        str(self.width - cut_width - self.pal_width - 20) + ":" +
                        str(self.depth - self.pal_width))
+            self.addPalObject(pol)
+            pol.move("x", self.pal_width)
+            pol.move("y", self.pal_width)
+            pol.move("z", int((self.height - self.pal_width) / 2))
+            pol.move("y", -cut_depth)
+
+            spate = placa_pal(self.label + ".spate", self.height - (2 * self.pal_width), self.depth - self.pal_width,
+                              self.pal_width, "", "", "", "")
+            self.addPalObject(spate)
+            spate.rotate("y")
+            spate.move("y", self.pal_width)
+            spate.move("z", self.pal_width)
+            spate.move("y", -cut_depth)
+
+            lat1 = placa_pal(self.label + ".lat1", self.height, self.width - cut_width, self.pal_width, self.cant_lab,
+                             "",
+                             self.cant_lab, self.cant_lab)
+            self.addPalObject(lat1)
+            lat1.rotate("y")
+            lat1.rotate("z")
+            lat1.move("y", -cut_depth)
+
+            lat2 = placa_pal(self.label + ".lat2", self.height, self.depth - cut_depth, self.pal_width, self.cant_lab,
+                             "",
+                             self.cant_lab, self.cant_lab)
+            self.addPalObject(lat2)
+            lat2.rotate("y")
+            lat2.move("x", self.width - self.pal_width)
+            lat2.move("y", self.depth - lat2.width)
+            lat2.move("y", -cut_depth)
+
+            self.front = self.front + [["front", self.label + "_1", self.height - 4, cut_depth - 3 - front_thick]]
+            self.front = self.front + [["front", self.label + "_2", self.height - 4, cut_width - 3 - front_thick]]
+
+
         elif l_r == "right":
+            #placa de jos
+            jos = placa_pal(self.label + ".jos", self.width - self.pal_width, self.depth - self.pal_width,
+                            self.pal_width,
+                            "", "", "", "")
+            jos.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
+                       str(self.width - self.pal_width) + ":" +
+                       str(self.depth - self.pal_width) + ":" +
+                       str(self.width - cut_width) + ":" +
+                       str(cut_depth - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
+                       str(cut_width - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
+                       str(self.depth - cut_depth) + ":")
+            self.addPalObject(jos)
+            jos.move("y", self.pal_width)
+            jos.move("y", -cut_depth)
+            jos.move("x", self.pal_width)
+
+            #placa de sus
+            sus = placa_pal(self.label + ".sus", self.width - self.pal_width, self.depth - self.pal_width,
+                            self.pal_width,
+                            "", "", "", "")
+            sus.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
+                       str(self.width - self.pal_width) + ":" +
+                       str(self.depth - self.pal_width) + ":" +
+                       str(self.width - cut_width) + ":" +
+                       str(cut_depth - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
+                       str(cut_width - self.pal_width) + "(cant " + str(self.cant_lab) + "):" +
+                       str(self.depth - cut_depth) + ":")
+
+            self.addPalObject(sus)
+            sus.move("y", self.pal_width)
+            sus.move("z", self.height - self.pal_width)
+            sus.move("y", -cut_depth)
+            sus.move("x", self.pal_width)
+
+            pol = placa_pal(self.label + ".pol", self.width - (2 * self.pal_width), self.depth - (1 * self.pal_width),
+                        self.pal_width, "", "", "", "")
             pol.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
                        str(self.width - (2 * self.pal_width)) + ":" +
                        str(self.depth - self.pal_width) + ":" +
@@ -553,40 +693,45 @@ class corp:
                        str(cut_depth - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
                        str(cut_width - self.pal_width + 20) + "(cant " + str(self.cant_lab) + "):" +
                        str(self.depth - cut_depth - 20) + ":")
+            self.addPalObject(pol)
+            pol.move("x", self.pal_width)
+            pol.move("y", self.pal_width)
+            pol.move("z", int((self.height - self.pal_width) / 2))
+            pol.move("y", -cut_depth)
+
+            spate = placa_pal(self.label + ".spate", self.height - (2 * self.pal_width), self.depth - self.pal_width,
+                              self.pal_width, "", "", "", "")
+            self.addPalObject(spate)
+            spate.rotate("y")
+            spate.move("y", self.pal_width)
+            spate.move("x", self.width - self.pal_width)
+            spate.move("z", self.pal_width)
+            spate.move("y", -cut_depth)
+
+            lat1 = placa_pal(self.label + ".lat1", self.height, self.width - cut_width, self.pal_width, self.cant_lab,
+                             "",
+                             self.cant_lab, self.cant_lab)
+            self.addPalObject(lat1)
+            lat1.rotate("y")
+            lat1.rotate("z")
+            lat1.move("y", -cut_depth)
+            lat1.move("x", cut_width)
+
+            lat2 = placa_pal(self.label + ".lat2", self.height, self.depth - cut_depth, self.pal_width, self.cant_lab,
+                             "",
+                             self.cant_lab, self.cant_lab)
+            self.addPalObject(lat2)
+            lat2.rotate("y")
+            #lat2.move("x", self.width - self.pal_width)
+            #lat2.move("y", self.depth - lat2.width)
+            #lat2.move("y", -cut_depth)
+
+            self.front = self.front + [["front", self.label + "_1", self.height - 4, cut_depth - 3 - front_thick]]
+            self.front = self.front + [["front", self.label + "_2", self.height - 4, cut_width - 3 - front_thick]]
+
+
         else:
             print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
-
-        self.addPalObject(pol)
-        pol.move("x", self.pal_width)
-        pol.move("y", self.pal_width)
-        pol.move("z", int((self.height - self.pal_width) / 2))
-        pol.move("y", -cut_depth)
-
-        spate = placa_pal(self.label + ".spate", self.height - (2 * self.pal_width), self.depth - self.pal_width,
-                          self.pal_width, "", "", "", "")
-        self.addPalObject(spate)
-        spate.rotate("y")
-        spate.move("y", self.pal_width)
-        spate.move("z", self.pal_width)
-        spate.move("y", -cut_depth)
-
-        lat1 = placa_pal(self.label + ".lat1", self.height, self.width - cut_width, self.pal_width, self.cant_lab, "",
-                         self.cant_lab, self.cant_lab)
-        self.addPalObject(lat1)
-        lat1.rotate("y")
-        lat1.rotate("z")
-        lat1.move("y", -cut_depth)
-
-        lat2 = placa_pal(self.label + ".lat2", self.height, self.depth - cut_depth, self.pal_width, self.cant_lab, "",
-                         self.cant_lab, self.cant_lab)
-        self.addPalObject(lat2)
-        lat2.rotate("y")
-        lat2.move("x", self.width - self.pal_width)
-        lat2.move("y", self.depth - lat2.width)
-        lat2.move("y", -cut_depth)
-
-        self.front = self.front + [["front", self.label + "_1", self.height - 4, cut_depth - 3 - front_thick]]
-        self.front = self.front + [["front", self.label + "_2", self.height - 4, cut_width - 3 - front_thick]]
 
         self.addPFL()
 
@@ -663,7 +808,7 @@ class corp:
                              self.cant_lab, "", "", "")
         legatura.move("x", self.pal_width)
         legatura.move("z", self.pal_width)
-        legatura.move("y", self.depth)
+        legatura.move("y", self.depth - self.pal_width)
         legatura.rotate("x")
         self.addPalObject(legatura)
 
@@ -706,7 +851,7 @@ class corp:
         self.addAcces("Joly" + str(self.width) + str(self.depth), 1)
         self.addAcces("surub 3.5x16", 8)  # prentu glisiere
         self.addAcces("surub 3.5x16", 8)  # pentru front
-        self.addPFL()
+        #self.addPFL()
 
     def buildMsVBox(self):
         # self.addAcces("blat",self.width/1000)
@@ -714,8 +859,9 @@ class corp:
         self.addAcces("plinta", self.width / 1000)
         self.addAcces("surub intre corpuri", 10)
         self.addBlat(self.width / 1000)
+        self.addFront([[100,100]], 2, "door")
 
-    def buildTower(self, gap1, gap2, gap3, gap_heat):
+    def buildTower(self, gap_list, gap_heat, front_list):
         self.depth = self.depth - gap_heat
         jos = placa_pal(self.label + ".jos", self.width, self.depth, self.pal_width, self.cant_lab, "", self.cant_lab,
                         self.cant_lab)
@@ -740,9 +886,9 @@ class corp:
         sus.move("z", lat1.length)
         self.addPalObject(sus)
 
-        self.addSepH(self.width - 2 * self.pal_width, 0, gap1, self.cant)
-        self.addSepH(self.width - 2 * self.pal_width, 0, gap1 + gap2 + self.pal_width, self.cant)
-        self.addSepH(self.width - 2 * self.pal_width, 0, gap1 + gap2 + gap3 + (2 * self.pal_width), self.cant)
+        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0], self.cant)
+        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0] + gap_list[1] + self.pal_width, self.cant)
+        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.pal_width), self.cant)
         # self.addSeparator("h",self.cant_lab)
         # self.addSeparator("h",self.cant_lab)
         self.addAcces("surub", 8)
@@ -753,6 +899,38 @@ class corp:
         self.addAcces("surub 3.5x16", picioare * 4)  # pentru picioare
 
         self.addPFL()
+
+        # Se seteaza fronturile pentru turn
+        # gap_list[0]
+        if (front_list[0] == 1) and (front_list[1] == 0):
+            self.addFrontManual(gap_list[0] + (2 * self.pal_width) - 4, self.width - 4)
+        if (front_list[0] == 1) and (front_list[1] == 1):
+            self.addFrontManual(gap_list[0] + (1.5 * self.pal_width) - 3, self.width - 4)
+        # gap_list[1]
+        if (front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 0):
+            self.addFrontManual(gap_list[1] + (2 * self.pal_width) - 4, self.width - 4)
+        if (((front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 0))
+                or ((front_list[1] == 1) and (front_list[0] == 0) and (front_list[2] == 1))):
+            self.addFrontManual(gap_list[1] + (1.5 * self.pal_width) - 3, self.width - 4)
+        if (front_list[1] == 1) and (front_list[0] == 1) and (front_list[2] == 1):
+            self.addFrontManual(gap_list[1] + self.pal_width - 4, self.width - 4)
+
+        # gap_list[2]
+        if (front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 0):
+            self.addFrontManual(gap_list[2] + (2 * self.pal_width) - 4, self.width - 4)
+        if (((front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 0))
+                or ((front_list[2] == 1) and (front_list[1] == 0) and (front_list[3] == 1))):
+            self.addFrontManual(gap_list[2] + (1.5 * self.pal_width) - 3, self.width - 4)
+        if (front_list[2] == 1) and (front_list[1] == 1) and (front_list[3] == 1):
+            self.addFrontManual(gap_list[2] + self.pal_width - 4, self.width - 4)
+
+        # gap4
+        if (front_list[3] == 1) and (front_list[2] == 0):
+            self.addFrontManual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3 * self.pal_width) - 4,
+                             self.width - 4)
+        if (front_list[3] == 1) and (front_list[2] == 1):
+            self.addFrontManual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3.5 * self.pal_width) - 3,
+                             self.width - 4)
 
     ############
     ## UTILS ###
@@ -948,7 +1126,10 @@ class comanda:
         self.cost_cant[0] = math.ceil(self.m_cant[0]) * self.price_cant[0]
         self.cost_cant[1] = math.ceil(self.m_cant[1]) * self.price_cant[1]
 
-        print("Cost manopera:", self.pret_manop, "| Discount[%]:", discount)
+        if discount == 0:
+            print("Cost manopera:", self.pret_manop)
+        else:
+            print("Cost manopera:", self.pret_manop, "| Discount[%]:", discount)
         print("Cost Pal: ", self.cost_pal, "| Placi:", self.cost_pal / self.price_pal, "| Pret placa:", self.price_pal)
         print("Cost PFL: ", self.cost_pfl, "| Placi:", self.cost_pfl / self.price_pfl, "| Pret placa:", self.price_pfl)
         print("Cost Front: ", self.cost_front, "| m2:", math.ceil(self.m2front), "| Pret: ", self.price_front)
@@ -1081,6 +1262,7 @@ class comanda:
             os.mkdir(folder_name)
 
         name = os.path.join(folder_name, "3D "+ self.client)
+
         ofset = 0
         for i in range(len(self.corpuri)):
             self.corpuri[i].drawCorp(name, ox + ofset, oy, oz)
