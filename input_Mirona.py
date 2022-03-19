@@ -11,6 +11,8 @@ h_bucatarie = 2240  # inaltimea maxima a mobilei, lasata cu 10mm mai jos sa avem
 h_faianta_top = 1650
 h_faianta_base = 850
 d_base = 600  # adancime blat jos
+h_MsV_min = 850 #TODO de verificat daca incape MsV sub blat
+h_MsV_max = 870
 
 # definitii mobila
 

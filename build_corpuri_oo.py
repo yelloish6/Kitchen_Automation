@@ -5,6 +5,17 @@ import math
 import os
 from export_stl import *
 
+class placa:
+    def __init__(self, label, L, w, th):
+        self.label = label
+        self.length = L
+        self.width = w
+        self.thick = th
+        self.obs = ""
+        self.position = [self.label, self.length, self.width, self.thick, 0, 0, 0]  # pozitia placii in corp
+        self.type = "" #pal, pfl, front
+
+
 class placa_pal:
     def __init__(self, label, L, l, w_pal, cant_L1, cant_L2, cant_l1, cant_l2):
         self.label = label
@@ -131,7 +142,7 @@ class corp:
             self.palOO.pop(remIndex[i])
             self.arch.pop(remIndex[i])
 
-    #TODO de transformat RemPal in RemPlaca de orice fel
+    # TODO de transformat RemPal in RemPlaca de orice fel
     # TODO de scazut cantul cand se scoate o placa de pal
 
     def addLeg(self, leg_width, placa_cant):
@@ -575,7 +586,7 @@ class corp:
         # include PFL si fronturi
         if l_r == "left":
             # placa de jos
-            jos = placa_pal(self.label + ".jos", self.width - self.pal_width, self.depth - self.pal_width,
+            jos = placa_pal(self.label + ".jos", self.width - (2 * self.pal_width), self.depth - self.pal_width,
                             self.pal_width,
                             "", "", "", "")
             jos.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
@@ -587,9 +598,10 @@ class corp:
                        str(self.depth - self.pal_width))
             self.addPalObject(jos)
             jos.move("y", self.pal_width)
+            jos.move("x", self.pal_width)
             jos.move("y", -cut_depth)
             #placa de sus
-            sus = placa_pal(self.label + ".sus", self.width - self.pal_width, self.depth - self.pal_width,
+            sus = placa_pal(self.label + ".sus", self.width - (2 * self.pal_width), self.depth - self.pal_width,
                             self.pal_width,
                             "", "", "", "")
             sus.addObs("decupaj colt stanga. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
@@ -601,6 +613,7 @@ class corp:
                        str(self.depth - self.pal_width))
             self.addPalObject(sus)
             sus.move("y", self.pal_width)
+            sus.move("x", self.pal_width)
             sus.move("z", self.height - self.pal_width)
             sus.move("y", -cut_depth)
 
@@ -620,12 +633,12 @@ class corp:
             pol.move("z", int((self.height - self.pal_width) / 2))
             pol.move("y", -cut_depth)
 
-            spate = placa_pal(self.label + ".spate", self.height - (2 * self.pal_width), self.depth - self.pal_width,
+            spate = placa_pal(self.label + ".spate", self.height, self.depth - self.pal_width,
                               self.pal_width, "", "", "", "")
             self.addPalObject(spate)
             spate.rotate("y")
             spate.move("y", self.pal_width)
-            spate.move("z", self.pal_width)
+            #spate.move("z", self.pal_width)
             spate.move("y", -cut_depth)
 
             lat1 = placa_pal(self.label + ".lat1", self.height, self.width - cut_width, self.pal_width, self.cant_lab,
@@ -651,7 +664,7 @@ class corp:
 
         elif l_r == "right":
             #placa de jos
-            jos = placa_pal(self.label + ".jos", self.width - self.pal_width, self.depth - self.pal_width,
+            jos = placa_pal(self.label + ".jos", self.width - (2 * self.pal_width), self.depth - self.pal_width,
                             self.pal_width,
                             "", "", "", "")
             jos.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
@@ -667,7 +680,7 @@ class corp:
             jos.move("x", self.pal_width)
 
             #placa de sus
-            sus = placa_pal(self.label + ".sus", self.width - self.pal_width, self.depth - self.pal_width,
+            sus = placa_pal(self.label + ".sus", self.width - (2 * self.pal_width), self.depth - self.pal_width,
                             self.pal_width,
                             "", "", "", "")
             sus.addObs("decupaj colt dreapta. Cote in sensul acelor de ceasornic, de la coltul din stanga spate: " +
@@ -699,13 +712,13 @@ class corp:
             pol.move("z", int((self.height - self.pal_width) / 2))
             pol.move("y", -cut_depth)
 
-            spate = placa_pal(self.label + ".spate", self.height - (2 * self.pal_width), self.depth - self.pal_width,
+            spate = placa_pal(self.label + ".spate", self.height , self.depth - self.pal_width,
                               self.pal_width, "", "", "", "")
             self.addPalObject(spate)
             spate.rotate("y")
             spate.move("y", self.pal_width)
             spate.move("x", self.width - self.pal_width)
-            spate.move("z", self.pal_width)
+            #spate.move("z", self.pal_width)
             spate.move("y", -cut_depth)
 
             lat1 = placa_pal(self.label + ".lat1", self.height, self.width - cut_width, self.pal_width, self.cant_lab,
@@ -851,7 +864,8 @@ class corp:
         self.addAcces("Joly" + str(self.width) + str(self.depth), 1)
         self.addAcces("surub 3.5x16", 8)  # prentu glisiere
         self.addAcces("surub 3.5x16", 8)  # pentru front
-        #self.addPFL()
+        self.addPFL()
+        self.addFront([[100, 100]], 2, "door")
 
     def buildMsVBox(self):
         # self.addAcces("blat",self.width/1000)
@@ -886,9 +900,9 @@ class corp:
         sus.move("z", lat1.length)
         self.addPalObject(sus)
 
-        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0], self.cant)
-        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0] + gap_list[1] + self.pal_width, self.cant)
-        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.pal_width), self.cant)
+        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0], self.cant_lab)
+        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0] + gap_list[1] + self.pal_width, self.cant_lab)
+        self.addSepH(self.width - 2 * self.pal_width, 0, gap_list[0] + gap_list[1] + gap_list[2] + (2 * self.pal_width), self.cant_lab)
         # self.addSeparator("h",self.cant_lab)
         # self.addSeparator("h",self.cant_lab)
         self.addAcces("surub", 8)
