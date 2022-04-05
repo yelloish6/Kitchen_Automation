@@ -5,6 +5,8 @@ import math
 import os
 from export_stl import *
 
+
+
 class placa:
     def __init__(self, label, L, w, th):
         self.label = label
@@ -14,31 +16,6 @@ class placa:
         self.obs = ""
         self.position = [self.label, self.length, self.width, self.thick, 0, 0, 0]  # pozitia placii in corp
         self.type = "" #pal, pfl, front
-
-
-class placa_pal:
-    def __init__(self, label, L, l, w_pal, cant_L1, cant_L2, cant_l1, cant_l2):
-        self.label = label
-        self.length = L
-        self.width = l
-        self.thick = w_pal
-        self.cant = [cant_L1, cant_L2, cant_l1, cant_l2]
-        self.obs = ""
-        self.position = [self.label, self.length, self.width, self.thick, 0, 0, 0]  # pozitia placii in corp
-
-        length_cant04 = 0
-        length_cant2 = 0
-
-        for i in range(2):
-            if self.cant[i] == 0.4:
-                length_cant04 = length_cant04 + self.length
-            if self.cant[i] == 2:
-                length_cant2 = length_cant2 + self.length
-            if self.cant[i + 2] == 0.4:
-                length_cant04 = length_cant04 + self.width
-            if self.cant[i + 2] == 2:
-                length_cant2 = length_cant2 + self.width
-        self.cant_length = [['0.4', length_cant04], ['2', length_cant2]]
 
     def getPlaca(self):
         return [["pal", self.label, self.length, self.width, self.thick] + self.cant + [self.obs]]
@@ -88,6 +65,87 @@ class placa_pal:
     def exportCAD(self, file_name, ox, oy, oz):
         exportStl(file_name, self.label, self.length, self.width, self.thick, ox, oy, oz)
 
+class placa_pal(placa):
+    def __init__(self, label, L, l, w_pal, cant_L1, cant_L2, cant_l1, cant_l2):
+        self.label = label
+        self.length = L
+        self.width = l
+        self.thick = w_pal
+        self.cant = [cant_L1, cant_L2, cant_l1, cant_l2]
+        self.obs = ""
+        self.position = [self.label, self.length, self.width, self.thick, 0, 0, 0]  # pozitia placii in corp
+        self.type = "pal"
+
+        length_cant04 = 0
+        length_cant2 = 0
+
+        for i in range(2):
+            if self.cant[i] == 0.4:
+                length_cant04 = length_cant04 + self.length
+            if self.cant[i] == 2:
+                length_cant2 = length_cant2 + self.length
+            if self.cant[i + 2] == 0.4:
+                length_cant04 = length_cant04 + self.width
+            if self.cant[i + 2] == 2:
+                length_cant2 = length_cant2 + self.width
+        self.cant_length = [['0.4', length_cant04], ['2', length_cant2]]
+
+"""
+    def getPlacaOO(self):
+        return self
+
+    def addObs(self, text):
+        self.obs = self.obs + text
+
+    def getLength(self):
+        return self.length
+
+    def getWidth(self):
+        return self.width
+
+    def rotate(self, axis):
+        # axis = "x"/"y"/"z"
+        initX = self.position[1]
+        initY = self.position[2]
+        initZ = self.position[3]
+        if axis == "x":
+            self.position[1] = initX
+            self.position[2] = initZ
+            self.position[3] = initY
+        elif axis == "y":
+            self.position[1] = initZ
+            self.position[2] = initY
+            self.position[3] = initX
+        elif axis == "z":
+            self.position[1] = initY
+            self.position[2] = initX
+            self.position[3] = initZ
+        else:
+            self.position[1] = initX
+            self.position[2] = initY
+            self.position[3] = initZ
+
+    def move(self, axis, offset):
+        if axis == "x":
+            self.position[4] = self.position[4] + offset
+        if axis == "y":
+            self.position[5] = self.position[5] + offset
+        if axis == "z":
+            self.position[6] = self.position[6] + offset
+
+    def exportCAD(self, file_name, ox, oy, oz):
+        exportStl(file_name, self.label, self.length, self.width, self.thick, ox, oy, oz)
+"""
+
+class front(placa):
+    def __init__(self, label, L, w, th):
+        super().__init__(label, L, w, th)
+        self.type = "front"
+
+class pfl(placa):
+    def __init__(self, label, L, w):
+        super().__init__(label, L, w, 4)
+        self.type = "pfl"
 
 class corp:
     def __init__(self, label, height, width, depth, w_pal, w_cant):
@@ -101,7 +159,9 @@ class corp:
         self.pal = []
         self.palOO = []
         self.pfl = []
+        self.pflOO = []
         self.front = []
+        self.frontOO = []
         self.blat = 0
         self.acc = []
         self.sep_space_h = self.height - (2 * self.pal_width)
@@ -159,6 +219,17 @@ class corp:
     def addPFL(self):
         self.pfl = self.pfl + [["pfl", self.label + ".pfl", self.height - 4, self.width - 4]]
         self.addAcces("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150))
+
+    def addPFLObject(self):
+        placa = pfl(self.label + ".pfl", self.width - 4, self.height - 4)
+        self.pflOO.append(placa)
+        self.arch.append(placa.__getattribute__("position"))
+        self.pfl = self.pfl + [["pfl", self.label + ".pfl", self.height - 4, self.width - 4]]
+        self.addAcces("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150))
+        placa.rotate("x")
+        placa.move("y",self.depth)
+        placa.move("x", 2)
+        placa.move("z", 2)
 
     def addBlat(self, m_blat):
         self.blat = self.blat + m_blat
@@ -556,7 +627,7 @@ class corp:
 
 
 
-        #self.addPFL()
+        self.addPFLObject()
 
         self.addAcces("balama usa franta", 2)
         self.addAcces("balama 170 deg", 2)
@@ -746,7 +817,7 @@ class corp:
         else:
             print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
 
-        self.addPFL()
+        self.addPFLObject()
 
         self.addAcces("balama usa franta", 2)
         self.addAcces("balama 170 deg", 2)
@@ -812,7 +883,7 @@ class corp:
         self.addPalObject(leg2)
         # self.arch.append([self.pal[4][1],self.pal[4][2],self.pal[4][3],self.pal[4][4],self.pal[0][4],self.pal[0][3]-self.pal[4][3],self.pal[0][2]+self.pal[2][4]-self.pal[4][4]])
 
-        self.addPFL()
+        self.addPFLObject()
 
     def buildSinkBox(self):
         self.buildBaseBox()
@@ -857,14 +928,14 @@ class corp:
         sus.move("x", lat1.thick)
         self.addPalObject(sus)
 
-        self.addPFL()
+        self.addPFLObject()
 
     def buildJolyBox(self):
         self.buildBaseBox()
         self.addAcces("Joly" + str(self.width) + str(self.depth), 1)
         self.addAcces("surub 3.5x16", 8)  # prentu glisiere
         self.addAcces("surub 3.5x16", 8)  # pentru front
-        self.addPFL()
+        self.addPFLObject()
         self.addFront([[100, 100]], 2, "door")
 
     def buildMsVBox(self):
@@ -912,7 +983,7 @@ class corp:
         self.addAcces("clema plinta", picioare / 2)
         self.addAcces("surub 3.5x16", picioare * 4)  # pentru picioare
 
-        self.addPFL()
+        self.addPFLObject()
 
         # Se seteaza fronturile pentru turn
         # gap_list[0]
@@ -1017,7 +1088,6 @@ class corp:
                       self.arch[i][4] + ox,
                       self.arch[i][5] + oy,
                       self.arch[i][6] + oz)
-
 
 class comanda:
     def __init__(self, client, discount):
@@ -1128,7 +1198,7 @@ class comanda:
         # MANOPERA
         discount = self.discount
         h_rate = 100
-        self.pret_manop = math.ceil((8 + (self.corp_count * 2) + 4 + self.m_blat * 0.5)) * h_rate
+        self.pret_manop = math.ceil((8 + (self.corp_count * 2) + 5 + self.m_blat * 0.5)) * h_rate
         # 8h proictare
         # 2h per corp asamblare, pozitionare si montaj fronturi
         # 4h montaj electrocasnice
