@@ -1,0 +1,21 @@
+{
+  "material":
+  [
+    {
+      "type": "pal",
+      "name": "PAL Alb Creta W908 ST2",
+      "price": 64.75,
+      "unit": "m2",
+      "supplier": "Proficut",
+      "minim": 0.5
+    },
+    {
+      "type": "pal",
+      "name": "PAL Stejar Bardolino",
+      "price": 74.5,
+      "unit": "m2",
+      "supplier": "Proficut",
+      "minim": 0.5
+    }
+  ]
+}

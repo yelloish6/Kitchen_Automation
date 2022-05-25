@@ -3,6 +3,7 @@
 import csv
 import math
 import os
+import json
 from export_stl import *
 
 
@@ -147,6 +148,17 @@ class pfl(placa):
         super().__init__(label, L, w, 4)
         self.type = "pfl"
 
+class accesoriu:
+    def __init__(self, name):
+        self.name = name
+        self.price = 0
+
+        with open('price_list.csv') as price_list_file:
+            price_reader = csv.DictReader(price_list_file, delimiter=',')
+            line_count = 0
+            for row in price_reader:
+                print(row["Item"], row["price"])
+
 class corp:
     def __init__(self, label, height, width, depth, w_pal, w_cant):
         self.label = label
@@ -182,14 +194,12 @@ class corp:
         self.arch.append(placa.__getattribute__("position"))
         self.cant_length[0][1] = self.cant_length[0][1] + placa.cant_length[0][1]
         self.cant_length[1][1] = self.cant_length[1][1] + placa.cant_length[1][1]
-
     def addPalObject(self, placa):
         self.pal = self.pal + placa.getPlaca()
         self.palOO.append(placa)
         self.arch.append(placa.__getattribute__("position"))
         self.cant_length[0][1] = self.cant_length[0][1] + placa.cant_length[0][1]
         self.cant_length[1][1] = self.cant_length[1][1] + placa.cant_length[1][1]
-
     def remPal(self, label):
         remLab = self.label + label
         corp = self.pal
@@ -215,11 +225,9 @@ class corp:
                               "", "")
         self.addPalObject(placa)
         self.addAcces("surub", 4)
-
     def addPFL(self):
         self.pfl = self.pfl + [["pfl", self.label + ".pfl", self.height - 4, self.width - 4]]
         self.addAcces("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150))
-
     def addPFLObject(self):
         placa = pfl(self.label + ".pfl", self.width - 4, self.height - 4)
         self.pflOO.append(placa)
@@ -230,10 +238,21 @@ class corp:
         placa.move("y",self.depth)
         placa.move("x", 2)
         placa.move("z", 2)
+    def remPFLObject(self, label):
 
+        for i in range(len(self.pflOO)):
+            current_label = str(self.pflOO[i].__getattribute__("label"))
+            if current_label == label:
+                pfl_index = i
+        for i in range(len(self.arch)):
+            if self.arch[i][0] == label:
+                self.arch.pop(i)
+        for i in range(len(self.pfl)):
+            if self.pfl[i][1] == label:
+                self.pfl.pop(i)
+        self.remAcces("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150))
     def addBlat(self, m_blat):
         self.blat = self.blat + m_blat
-
     def addAcces(self, name, buc):
         found = False
         for i in range(len(self.acc)):
@@ -243,6 +262,16 @@ class corp:
                 found = True
         if not found:
             self.acc = self.acc + [["accesoriu", self.label, name, buc]]
+
+    def remAcces(self, name, buc):
+        found = False
+        for i in range(len(self.acc)):
+            acc_current = self.acc[i]
+            if (name == acc_current[2]):
+                acc_current[3] = acc_current[3] - buc
+                found = True
+        if not found:
+            print("ERROR: accessory to remove not found")
 
     def addPol(self, nr, cant):
         # orient = "h" sau "v"
@@ -623,11 +652,8 @@ class corp:
         else:
             print("ERROR: Undefined orientation (only 'left' or 'right' possible!")
 
-
-
-
-
         self.addPFLObject()
+        self.getPFLOO()[0].getPlacaOO().move("y", - cut_depth)
 
         self.addAcces("balama usa franta", 2)
         self.addAcces("balama 170 deg", 2)
@@ -887,6 +913,11 @@ class corp:
 
     def buildSinkBox(self):
         self.buildBaseBox()
+        self.remPFLObject(str(self.label + ".pfl"))
+        #for i in self.getPFLOO():
+        #    if self.getPFLOO()[i].__getattribute__("label") == self.label + ".pfl":
+        #        self.getPFLOO().pop()
+        #self.getPFLOO().pop(self.getPFLOO()[0])
         leg_width = 100
         legatura = placa_pal(self.label + ".leg", self.width - (2 * self.pal_width), leg_width, self.pal_width,
                              self.cant_lab, "", "", "")
@@ -1048,6 +1079,9 @@ class corp:
     def getPFL(self):
         return self.pfl
 
+    def getPFLOO(self):
+        return self.pflOO
+
     def getFront(self):
         return self.front
 
@@ -1098,10 +1132,13 @@ class comanda:
         self.pret_manop = 0
         self.acc = []
         self.m2pal = 0
+        self.mat_pal = ""
         self.m2front = 0
         self.frezare = ""
         self.m2pfl = 0
+        self.mat_pfl = ""
         self.m_blat = 0
+        self.mat_blat = ""
         self.m_cant = [0, 0]
         self.price_pal = 1
         self.price_pfl = 1
@@ -1116,6 +1153,7 @@ class comanda:
         self.cost_cant = [0, 0]
         self.cost_acc = 0
         self.discount = discount
+
         with open('price_list.csv') as price_list_file:
             price_reader = csv.reader(price_list_file, delimiter=',')
             line_count = 0
@@ -1165,8 +1203,21 @@ class comanda:
             if (name == acc_current[2]):
                 acc_current[3] = acc_current[3] + buc
                 found = True
+                index_of_acc = -1
+                for row in self.price_list:
+                    if acc_current in row:
+                        index_of_acc = self.price_list.index(row)
+                acc_current[4] = acc_current[4] + (float(self.price_list[index_of_acc][1]) * float(self.acc[i][3]))
         if not found:
-            self.acc = self.acc + [["accesoriu", "total", name, buc]]
+            self.acc = self.acc + [["accesoriu", "total", name, buc, 0]]
+
+        #for i in range(len(self.acc)):
+        #    acc_to_find = self.acc[i][2]
+        #    index_of_acc = -1
+        #    for row in self.price_list:
+        #        if acc_to_find in row:
+        #            index_of_acc = self.price_list.index(row)
+        #    self.cost_acc = self.cost_acc + (float(self.price_list[index_of_acc][1]) * float(self.acc[i][3]))
 
     def print_status(self):
 
@@ -1286,6 +1337,7 @@ class comanda:
                 p = mobila[i].getAcces()
                 for j in range(len(p)):
                     comanda_writer.writerow(p[j])
+                    print(p[j])
             # total
             for i in range(len(self.acc)):
                 comanda_writer.writerow(self.acc[i])

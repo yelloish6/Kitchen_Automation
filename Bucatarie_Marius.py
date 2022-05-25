@@ -20,7 +20,6 @@ j3 = corp("J3", gen_h_base, 950 - gap_spate, 950 - gap_spate, 18, gen_cant)
 j3.buildBaseCorner(350 + gap_fata, 350 + gap_fata, "right", 18, True)
 mobila.append(j3)
 
-#TODO de scos PFL-ul la toate sink-box-urile
 j4 = corp("J4", gen_h_base, 1000, gen_d_base, 18, gen_cant)
 j4.buildSinkBox()
 j4.addFront([[100,50],[100,50]],gen_gap_front,"door")
