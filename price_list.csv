@@ -1,8 +1,8 @@
-Item,pret [ron],unitate,pret [ron],furnizor,link,minim,pret [ron],furnizor,link,minim,pret [ron],furnizor,link,minim
-pal,335,coala,335,proficut,PAL MEL Stejar Bardolino Gri H1146,0.5,,,,,,,,
-blat,137,m,137,proficut,BLAT BUC SONOMA Deschis Kaindl + debitare (20 RON/blat = 5 RON/m)),2,,,,,,,,
-pfl,85,coala,75,proficut,HDF ALB + debitare,0.5,,,,,,,,
-front,324,m2,324,protege parol,54EUR + TVA,1,,,,,,,,
+Item,Price,unitate,pret [ron],furnizor,link,minim,pret [ron],furnizor,link,minim,pret [ron],furnizor,link,minim
+pal,410,coala,335,proficut,PAL MEL Stejar Bardolino Gri H1146,0.5,,,,,,,,
+blat,175,m,137,proficut,BLAT BUC SONOMA Deschis Kaindl + debitare (20 RON/blat = 5 RON/m)),2,,,,,,,,
+pfl,100,coala,75,proficut,HDF ALB + debitare,0.5,,,,,,,,
+front,420,m2,420,protege parol,70EUR + TVA => 420 RON/m2,1,,,,,,,,
 cant04,3.43,m,3.43,proficut,ABS0422A,,,,,,,,,
 cant2,6.98,m,6.98,proficut,ABS222A,,,,,,,,,
 surub,0.08999,bucata,0.08999,feroshop,https://www.feroshop.ro/suruburi-lemn/surub-cuplare-cap-inecat-7-0x50-za-sw4,1000,,,,,,,,
@@ -29,7 +29,7 @@ pereche glisiera 450 mm,19,pereche,19,regency company,https://regencycompany.ro/
 pereche glisiera 500 mm,19.58,pereche,19.58,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m5000.html,1,25.42,regency company,https://regencycompany.ro/glisiere-cu-bile/glisiera-hdd-cu-bile-extensie-totala-45mml500--.html,1,39.93,regency company,https://regencycompany.ro/glisiere-cu-bile/glisiera-hdd-cu-bile-extensie-totala-cu-amortizare-45mml500.html,1
 pereche glisiera 550 mm,22.71,pereche,22.71,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m5500.html,1,30.45,regency company,https://regencycompany.ro/glisiere-cu-bile/glisiera-hdd-cu-bile-extensie-totala-45mm-l550.html,1,,,,
 pereche glisiera 600 mm,25.86,pereche,25.86,regency company,https://regencycompany.ro/glisiere-cu-role/glisiera-blum-maro-cu-rola-230m6000.html,1,32.95,regency company,https://regencycompany.ro/glisiere-cu-bile/glisiera-hdd-cu-bile-extensie-totala-45mm-l600.html,1,,,,
-Joly150500,200,bucata,107.76,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html,1,,,,,,,,
+Joly150500,150,bucata,107.76,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html,1,,,,,,,,
 Joly240500,250,bucata,107.76,regency company,https://regencycompany.ro/coloane-si-cosuri/cos-jolly-standard-15x45-culisare-laterala-cu-glisiera-cu-bile-pt-corp-de-200mm-crom.html,1,,,,,,,,
 Joly300500,300,bucata,244.55,MAM Bricolaj,https://webshop.mam-bricolaj.ro/produs/cos-jolly-300-mm-cu-amortizare-hafele?gclid=CjwKCAjw_tWRBhAwEiwALxFPoTAZRHSX3hwvYY7b79gUjj2oL3iZRrCTpfPMCOunEYo1TEYseA4WYhoCnkwQAvD_BwE,1,,,,,,,,
 tandembox M,200,bucata,200.2,ProfiCut,"(500) Laterale 90, Suport Spate, 6.6, Sina 78 | Cuplaj Front: 3.7*2 | 10% Buffer",,,,,,,,,

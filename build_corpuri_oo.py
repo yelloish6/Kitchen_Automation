@@ -151,13 +151,24 @@ class pfl(placa):
 class accesoriu:
     def __init__(self, name):
         self.name = name
-        self.price = 0
+        self.pieces = 0
 
         with open('price_list.csv') as price_list_file:
             price_reader = csv.DictReader(price_list_file, delimiter=',')
-            line_count = 0
+            found = False
             for row in price_reader:
-                print(row["Item"], row["price"])
+                if row["Item"] == self.name:
+                    found = True
+                    #print(row["Price"])
+                    self.price = row["Price"]
+            if found == False:
+                print("ERROR: Price for ",self.name," not found. Setting to 0 RON.")
+
+    def printAcces(self):
+        print("Accesoriu: ", self.name, " Price: ",self.price)
+
+    def addPieces(self, number):
+        self.pieces = self.pieces + number
 
 class corp:
     def __init__(self, label, height, width, depth, w_pal, w_cant):
@@ -240,10 +251,14 @@ class corp:
         placa.move("z", 2)
     def remPFLObject(self, label):
 
+        found = False
         for i in range(len(self.pflOO)):
             current_label = str(self.pflOO[i].__getattribute__("label"))
             if current_label == label:
                 pfl_index = i
+                self.pflOO.pop(pfl_index)
+                found = True
+
         for i in range(len(self.arch)):
             if self.arch[i][0] == label:
                 self.arch.pop(i)
@@ -251,8 +266,23 @@ class corp:
             if self.pfl[i][1] == label:
                 self.pfl.pop(i)
         self.remAcces("surub PFL", 2 * round(self.height / 150) + 2 * round(self.width / 150))
+        if found == False:
+            raise NameError("ERROR: Can't find ", label, " to delete!")
+
     def addBlat(self, m_blat):
         self.blat = self.blat + m_blat
+
+    #TODO de modificat lista de accesorii sa functioneze cu accesorii ca obiecte. In final sa avem preturile in lista de accesorii
+    def addAcces2(self, accesToAdd):
+        found = False
+        for i in range(len(self.acc)):
+            #print(self.acc[i].__getattribute__("name"))
+            if accesToAdd.__getattribute__("name") == self.acc[i].__getattribute__("name"):
+                self.acc[i].addPieces(accesToAdd.__getattribute__("pieces"))
+                found = True
+        if not found:
+            self.acc.append(accesToAdd)
+
     def addAcces(self, name, buc):
         found = False
         for i in range(len(self.acc)):
@@ -262,6 +292,8 @@ class corp:
                 found = True
         if not found:
             self.acc = self.acc + [["accesoriu", self.label, name, buc]]
+
+        acces = accesoriu(name)
 
     def remAcces(self, name, buc):
         found = False
@@ -1184,6 +1216,7 @@ class comanda:
         self.lungime = self.lungime + corp.width
         self.corp_count = self.corp_count + 1
         for j in range(len(corp.acc)):
+            #self.addAcces(corp.acc[j])
             self.addAcces(corp.acc[j][2], corp.acc[j][3])
         self.addAcces("surub intre corpuri", 2)
         for j in range(len(corp.pal)):
@@ -1337,7 +1370,6 @@ class comanda:
                 p = mobila[i].getAcces()
                 for j in range(len(p)):
                     comanda_writer.writerow(p[j])
-                    print(p[j])
             # total
             for i in range(len(self.acc)):
                 comanda_writer.writerow(self.acc[i])
@@ -1353,7 +1385,7 @@ class comanda:
             # comanda_writer.writerow(["S", 2800, 2070, ""])
             # comanda_writer.writerow(["K", 2])
             # comanda_writer.writerow(["@", "Length", "Width", "Quantity","Label","Can turn"])
-            comanda_writer.writerow(["Length", "Width", "Qty","Enabled"])
+            comanda_writer.writerow(["Length", "Width", "Qty", "Label", "Enabled"])
             # pe corpuri
             for i in range(len(mobila)):
                 p = mobila[i].getPal()
@@ -1362,7 +1394,7 @@ class comanda:
                     length = placa[2]
                     width = placa[3]
                     label = placa[1]
-                    comanda_writer.writerow([length, width, 1, "TRUE"])
+                    comanda_writer.writerow([length, width, 1, label, "TRUE"])
                     # comanda_writer.writerow([length, width, "1", "", "", "", "-1", "", "", "", "", "", "", ""])
                     # comanda_writer.writerow(["P", length, width, 1, label, "y"])
 
