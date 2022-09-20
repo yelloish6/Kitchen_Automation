@@ -1221,11 +1221,11 @@ class comanda:
         self.addAcces("surub intre corpuri", 2)
         for j in range(len(corp.pal)):
             self.m2pal = self.m2pal + ((corp.pal[j][2] * corp.pal[j][3]) / 1000000)
-        for j in range(len(corp.pfl)):
-            self.m2pfl = self.m2pfl + ((corp.pfl[j][2] * corp.pfl[j][3]) / 1000000)
-        for j in range(len(corp.front)):
-            self.m2front = self.m2front + ((corp.front[j][2] * corp.front[j][3]) / 1000000)
-        self.m_blat = self.m_blat + corp.blat
+        for j in range(len(corp.Pfl)):
+            self.m2pfl = self.m2pfl + ((corp.Pfl[j][2] * corp.Pfl[j][3]) / 1000000)
+        for j in range(len(corp.Front)):
+            self.m2front = self.m2front + ((corp.Front[j][2] * corp.Front[j][3]) / 1000000)
+        self.m_blat = self.m_blat + corp.Blat
         self.m_cant[0] = self.m_cant[0] + corp.cant_length[0][1] / 1000
         self.m_cant[1] = self.m_cant[1] + corp.cant_length[1][1] / 1000
 
@@ -1257,9 +1257,9 @@ class comanda:
         print("*** INFORMATII GENERALE ***")
         print("Numar de corpuri: ", self.corp_count)
         print("M2 PAL: ", self.m2pal)
-        print("Nr. coli PAL: ", math.ceil(self.m2pal / (2800 * 2070 / 1000000)))
+        print("Nr. coli PAL: ", math.ceil(self.m2pal / 5)) #5,1 e suprafata aprox ce poate fi utilizata dint-o placa de pal
         print("M2 PFL: ", self.m2pfl)
-        print("Nr. coli PFL: ", math.ceil(self.m2pfl / (2800 * 2070 / 1000000)))
+        print("Nr. coli PFL: ", math.ceil(self.m2pfl / 5)) #5,1 e suprafata aprox ce poate fi utilizata dint-o placa de pal
         print("M2 Front: ", self.m2front)
         print("M Blat: ", math.ceil(self.m_blat))
         print("M Cant 0.4", self.m_cant[0])
@@ -1287,8 +1287,8 @@ class comanda:
         # 2h per corp asamblare, pozitionare si montaj fronturi
         # 4h montaj electrocasnice
         # 0.5h pe metru de blat, montaj blat
-        self.cost_pal = math.ceil(self.m2pal / 5.3) * self.price_pal #5,3 e suprafata aprox ce poate fi utilizata dint-o placa de pal
-        self.cost_pfl = math.ceil(self.m2pfl / 5.3) * self.price_pfl #5,3 e suprafata aprox ce poate fi utilizata dint-o placa de pal
+        self.cost_pal = math.ceil(self.m2pal / 5) * self.price_pal #5,3 e suprafata aprox ce poate fi utilizata dint-o placa de pal
+        self.cost_pfl = math.ceil(self.m2pfl / 5) * self.price_pfl #5,3 e suprafata aprox ce poate fi utilizata dint-o placa de pal
         self.cost_front = math.ceil(self.m2front) * self.price_front
         self.cost_blat = math.ceil(self.m_blat) * self.price_blat
         self.cost_cant[0] = math.ceil(self.m_cant[0]) * self.price_cant[0]
@@ -1398,6 +1398,30 @@ class comanda:
                     # comanda_writer.writerow([length, width, "1", "", "", "", "-1", "", "", "", "", "", "", ""])
                     # comanda_writer.writerow(["P", length, width, 1, label, "y"])
 
+        name = os.path.join(folder_name, "PannelsCuttingList_OPCUT_pal_" + self.client + ".csv")
+        mobila = self.corpuri
+        with open(name, mode='w', newline="") as comanda_pal:
+            comanda_writer = csv.writer(comanda_pal, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            # comanda_writer.writerow(["N",self.client])
+            # comanda_writer.writerow(["M", "PAL ALB 18"])
+            # comanda_writer.writerow(["@", "Length", "Width", "Quantity"])
+            # comanda_writer.writerow(["S", 2800, 2070, ""])
+            # comanda_writer.writerow(["K", 2])
+            # comanda_writer.writerow(["@", "Length", "Width", "Quantity","Label","Can turn"])
+            comanda_writer.writerow(["name", "quantity", "width", "height", "can_rotate"])
+            # pe corpuri
+            for i in range(len(mobila)):
+                p = mobila[i].getPal()
+                for j in range(len(p)):
+                    placa = p[j]
+                    length = placa[2]
+                    width = placa[3]
+                    label = placa[1]
+                    comanda_writer.writerow([label, 1, width, length, "TRUE"])
+                    # comanda_writer.writerow([length, width, "1", "", "", "", "-1", "", "", "", "", "", "", ""])
+                    # comanda_writer.writerow(["P", length, width, 1, label, "y"])
+
+
         #pentru optimizare PFL
         name = os.path.join(folder_name, "PannelsCuttingList_pfl_" + self.client + ".csv")
         mobila = self.corpuri
@@ -1409,7 +1433,7 @@ class comanda:
             # comanda_writer.writerow(["S", 2800, 2070, ""])
             # comanda_writer.writerow(["K", 2])
             # comanda_writer.writerow(["@", "Length", "Width", "Quantity","Label","Can turn"])
-            comanda_writer.writerow(["Length", "Width", "Qty", "Enabled"])
+            comanda_writer.writerow(["Length", "Width", "Qty", "Label","Enabled"])
             # pe corpuri
             for i in range(len(mobila)):
                 p = mobila[i].getPFL()
@@ -1418,7 +1442,7 @@ class comanda:
                     length = placa[2]
                     width = placa[3]
                     label = placa[1]
-                    comanda_writer.writerow([length, width, 1, "TRUE"])
+                    comanda_writer.writerow([length, width, 1, label,"TRUE"])
                     # comanda_writer.writerow([length, width, "1", "", "", "", "-1", "", "", "", "", "", "", ""])
                     # comanda_writer.writerow(["P", length, width, 1, label, "y"])
 
