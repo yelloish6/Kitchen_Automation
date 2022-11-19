@@ -80,54 +80,58 @@ bar = Bar("Bar", 1200, 2400, 500, rules)
 #bar.append(blat_bar)
 mobila.append(bar)
 
-j1 = SinkBox("J1", base_height, 1200, base_depth, rules)
-j1.add_front([[50, 100], [50, 100]], "drawer")
-mobila.append(j1)
+#print(bar.material_list[1].__getattribute__("position"))
+bar.rotate("x")
+#print(bar.material_list[1].__getattribute__("position"))
 
-j2 = MsVBox("J2", base_height, 600, base_depth, rules)
-mobila.append(j2)
-
-j3 = BaseBox("J3", base_height, 600, base_depth, rules)
-j3.addTandemBox("M")
-j3.addTandemBox("D")
-j3.addTandemBox("D")
-j3.add_front([[20, 100], [40, 100], [40, 100]], "door")
-mobila.append(j3)
-
-j4 = BaseBox("J4", base_height, 600, base_depth, rules)
-j4.add_front([[100, 100]], "door")
-mobila.append(j4)
-
-j5 = BaseBox("J5", base_height, 600, base_depth, rules)
-j5.add_front([[100, 100]], "drawer")
-mobila.append(j5)
-
-j6 = BaseBox("j6", base_height, 600, base_depth, rules)
-j6.add_pol(1, "0.4")
-j6.add_front([[100, 100]], "door")
-mobila.append(j6)
-
-j7 = BaseBox("j7", base_height, 600, base_depth, rules)
-j7.addTandemBox("M")
-j7.addTandemBox("D")
-j7.addTandemBox("D")
-j7.add_front([[20, 100], [40, 100], [40, 100]], "door")
-mobila.append(j7)
-
-j8 = JollyBox("j8", base_height, 300, base_depth, rules)
-j8.add_front([[100, 100]], "door")
-mobila.append(j8)
-
-j9 = BaseBox("j9", base_height, 900, base_depth, rules)
-j9.add_front([[100, 50], [100, 50]], "drawer")
-mobila.append(j9)
-
-# corpurile de sus
-
-for i in range(3):
-    corp = TopBox("S" + str(i), 800, 1200, top_depth, rules)
-    corp.add_front([[100, 50], [100, 50]], "door")
-    mobila.append(corp)
+# j1 = SinkBox("J1", base_height, 1200, base_depth, rules)
+# j1.add_front([[50, 100], [50, 100]], "drawer")
+# mobila.append(j1)
+#
+# j2 = MsVBox("J2", base_height, 600, base_depth, rules)
+# mobila.append(j2)
+#
+# j3 = BaseBox("J3", base_height, 600, base_depth, rules)
+# j3.addTandemBox("M")
+# j3.addTandemBox("D")
+# j3.addTandemBox("D")
+# j3.add_front([[20, 100], [40, 100], [40, 100]], "door")
+# mobila.append(j3)
+#
+# j4 = BaseBox("J4", base_height, 600, base_depth, rules)
+# j4.add_front([[100, 100]], "door")
+# mobila.append(j4)
+#
+# j5 = BaseBox("J5", base_height, 600, base_depth, rules)
+# j5.add_front([[100, 100]], "drawer")
+# mobila.append(j5)
+#
+# j6 = BaseBox("j6", base_height, 600, base_depth, rules)
+# j6.add_pol(1, "0.4")
+# j6.add_front([[100, 100]], "door")
+# mobila.append(j6)
+#
+# j7 = BaseBox("j7", base_height, 600, base_depth, rules)
+# j7.addTandemBox("M")
+# j7.addTandemBox("D")
+# j7.addTandemBox("D")
+# j7.add_front([[20, 100], [40, 100], [40, 100]], "door")
+# mobila.append(j7)
+#
+# j8 = JollyBox("j8", base_height, 300, base_depth, rules)
+# j8.add_front([[100, 100]], "door")
+# mobila.append(j8)
+#
+# j9 = BaseBox("j9", base_height, 900, base_depth, rules)
+# j9.add_front([[100, 50], [100, 50]], "drawer")
+# mobila.append(j9)
+#
+# # corpurile de sus
+#
+# for i in range(3):
+#     corp = TopBox("S" + str(i), 800, 1200, top_depth, rules)
+#     corp.add_front([[100, 50], [100, 50]], "door")
+#     mobila.append(corp)
 
 mobila.print_status()
 mobila.export_csv()

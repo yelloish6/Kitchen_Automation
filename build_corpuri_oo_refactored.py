@@ -36,6 +36,7 @@ class Placa:
         self.thick = thick
         self.obs = ""
         self.position = [self.length, self.width, self.thick, 0, 0, 0]  # pozitia placii
+                      # (dim_x,       dim_y,      dim_z,    offset_x, offset_y, offset_z)
         self.type = ""  # pal, pfl, front
         self.material = ""
         self.price = 0
@@ -53,15 +54,15 @@ class Placa:
         init_z = self.position[2]
         if axis == "x":
             self.position[0] = init_x
-            self.position[1] = init_z
+            self.position[1] = -init_z
             self.position[2] = init_y
         elif axis == "y":
-            self.position[0] = init_z
+            self.position[0] = -init_z
             self.position[1] = init_y
             self.position[2] = init_x
         elif axis == "z":
             self.position[0] = init_y
-            self.position[1] = init_x
+            self.position[1] = -init_x
             self.position[2] = init_z
         else:
             self.position[0] = init_x
@@ -213,7 +214,7 @@ class corp:
         self.sep_max_depth = depth - self.cant
         # self.sep_prev = ""
         # self.arch = []  # matricea de arhitectura care contine elementele corpului orientate si cu offset
-        self.position = [0, 0, 0]  # TODO de folosit pozitia corpului
+        self.position = [0, 0, 0, 0, 0, 0]  # TODO de folosit pozitia corpului
         self.cant_length = [['0.4', 0], ['2', 0]]
 
     def append(self, obj):
@@ -1123,6 +1124,30 @@ class corp:
                 for j in range(len(p)):
                     comanda_writer.writerow(p[j])
 
+    def rotate(self, axis):
+        for i in range(len(self.material_list)):
+            if isinstance(self.material_list[i], Placa):
+                self.material_list[i].rotate(axis)
+                initial_position = self.material_list[i].__getattribute__("position")
+                final_position = initial_position
+                offset_y = initial_position[4]
+                print(offset_y)
+                offset_z = initial_position[5]
+                print(offset_z)
+                print(self.material_list[i].__getattribute__("label"), final_position)
+                final_position[5] = offset_y
+                final_position[4] = -offset_z
+                print(final_position)
+                self.material_list[i].position = final_position
+                #self.material_list[i].move("z", -1 * initial_position[5])
+                #self.material_list[i].move("y", initial_position[5])
+
+
+    def move(self, axis, offset):
+        for i in range(len(self.material_list)):
+            if isinstance(self.material_list[i], Placa):
+                self.material_list[i].move(axis,offset)
+
     def drawCorp(self, filename, ox, oy, oz):
         for i in range(len(self.material_list)):
             if isinstance(self.material_list[i], Placa):
@@ -1135,16 +1160,16 @@ class corp:
                           self.material_list[i].position[4] + oy,
                           self.material_list[i].position[5] + oz)
 
-    def drawCorp2(self, filename, ox, oy, oz):
-        for i in range(len(self.arch)):
-            exportStl(filename,
-                      self.arch[i][0] + str(i),
-                      self.arch[i][1],
-                      self.arch[i][2],
-                      self.arch[i][3],
-                      self.arch[i][4] + ox,
-                      self.arch[i][5] + oy,
-                      self.arch[i][6] + oz)
+    # def drawCorp2(self, filename, ox, oy, oz):
+    #     for i in range(len(self.arch)):
+    #         exportStl(filename,
+    #                   self.arch[i][0] + str(i),
+    #                   self.arch[i][1],
+    #                   self.arch[i][2],
+    #                   self.arch[i][3],
+    #                   self.arch[i][4] + ox,
+    #                   self.arch[i][5] + oy,
+    #                   self.arch[i][6] + oz)
 class BaseBox(corp):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1251,19 +1276,23 @@ class Bar(corp):
         lat1 = PlacaPal(self.label + ".lat1", self.height - self.thick_blat, self.depth - rules["gap_fata"],
                         self.thick_pal, self.cant_lab, self.cant_lab, self.cant_lab, "")
         lat1.rotate("y")
+        lat1.move("x",self.thick_pal)
         self.append(lat1)
 
         lat2 = PlacaPal(self.label + ".lat2", self.height - self.thick_blat, self.depth - rules["gap_fata"],
                         self.thick_pal, self.cant_lab, self.cant_lab, self.cant_lab, "")
         lat2.rotate("y")
-        lat2.move("x", self.width - self.thick_pal)
+        lat2.move("x", self.width)
         self.append(lat2)
 
         spate = PlacaPal(self.label + ".spate", self.height - self.thick_blat, self.width - 2 * self.thick_pal,
                          self.thick_pal, self.cant_lab, "", "", "")
         spate.rotate("x")
         spate.rotate("y")
-        spate.move("y", self.depth - self.thick_pal - rules["gap_fata"])
+        spate.rotate("y")
+        spate.rotate("y")
+        spate.move("z", self.height - self.thick_blat)
+        spate.move("y", self.depth - rules["gap_fata"]) #- self.thick_pal
         spate.move("x", self.thick_pal)
         self.append(spate)
 
@@ -1458,6 +1487,12 @@ class MsVBox(corp):
         blatul.move("y", -rules["gap_fata"])
         self.append(blatul)
         self.add_front([[100, 100]], "door")
+
+class latura:
+    def __init__(self, label):
+        self.label = label
+        self.corpuri = []
+
 
 class Comanda:
     def __init__(self, client, discount, req):
