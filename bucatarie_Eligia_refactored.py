@@ -81,7 +81,7 @@ bar = Bar("Bar", 1200, 2400, 500, rules)
 mobila.append(bar)
 
 #print(bar.material_list[1].__getattribute__("position"))
-bar.rotate("x")
+bar.rotate("y")
 #print(bar.material_list[1].__getattribute__("position"))
 
 # j1 = SinkBox("J1", base_height, 1200, base_depth, rules)

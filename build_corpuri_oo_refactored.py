@@ -1130,13 +1130,22 @@ class corp:
                 self.material_list[i].rotate(axis)
                 initial_position = self.material_list[i].__getattribute__("position")
                 final_position = initial_position
+                offset_x = initial_position[3]
                 offset_y = initial_position[4]
-                print(offset_y)
                 offset_z = initial_position[5]
-                print(offset_z)
                 print(self.material_list[i].__getattribute__("label"), final_position)
-                final_position[5] = offset_y
-                final_position[4] = -offset_z
+                if axis == "x":
+                    final_position[3] = offset_x
+                    final_position[4] = -offset_z
+                    final_position[5] = offset_y
+                elif axis == "y":
+                    final_position[3] = -offset_z
+                    final_position[4] = offset_y
+                    final_position[5] = offset_x
+                elif axis == "z":
+                    final_position[3] = offset_y
+                    final_position[4] = -offset_x
+                    final_position[5] = offset_z
                 print(final_position)
                 self.material_list[i].position = final_position
                 #self.material_list[i].move("z", -1 * initial_position[5])
