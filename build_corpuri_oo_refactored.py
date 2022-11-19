@@ -268,17 +268,30 @@ class corp:
         """
 
         h_tot = self.height - self.front_gap
+        h_count = 0
+        w_count = 0
         w_tot = self.width - self.front_gap
+        origin = [self.front_gap, self.front_gap]
         for i in range(len(split_list)):
             split = split_list[i]
             h = int((h_tot * split[0] / 100) - self.front_gap)
             w = int((w_tot * split[1] / 100) - self.front_gap)
             usa = Front(self.label + "_" + str(i + 1), h, w, self.thick_front)
-            usa.rotate("z")
             usa.rotate("x")
-            usa.move("x", 2)
-            usa.move("z", 2)
-            usa.move("y", -self.thick_front - 1000)
+            usa.move("x", origin[0])
+            usa.move("z", origin[1])
+            usa.rotate("y")
+            usa.move("x",usa.width)
+            if w_count != 100:
+                origin[0] += usa.width + int(self.front_gap / 2)
+                w_count += split[1]
+                if w_count == 100:
+                    origin[0] = self.front_gap
+                    w_count = 0
+                    if h_count != 100:
+                        origin[1] += usa.length + int(self.front_gap / 2)
+                        h_count += split[0]
+
             self.append(usa)
             if tip == "door":
                 if (h * w) > 280000:
@@ -1133,7 +1146,6 @@ class corp:
                 offset_x = initial_position[3]
                 offset_y = initial_position[4]
                 offset_z = initial_position[5]
-                print(self.material_list[i].__getattribute__("label"), final_position)
                 if axis == "x":
                     final_position[3] = offset_x
                     final_position[4] = -offset_z
@@ -1146,10 +1158,7 @@ class corp:
                     final_position[3] = offset_y
                     final_position[4] = -offset_x
                     final_position[5] = offset_z
-                print(final_position)
                 self.material_list[i].position = final_position
-                #self.material_list[i].move("z", -1 * initial_position[5])
-                #self.material_list[i].move("y", initial_position[5])
 
 
     def move(self, axis, offset):
@@ -1201,6 +1210,7 @@ class BaseBox(corp):
         lat1 = PlacaPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
         lat1.rotate("y")
+        lat1.move("x", lat1.thick)
         lat1.move("z", jos.thick)
         self.append(lat1)
 
@@ -1208,6 +1218,7 @@ class BaseBox(corp):
         lat2 = PlacaPal(self.label + ".lat", self.height - self.thick_pal, self.depth, self.thick_pal, self.cant_lab,
                         "", "", "")
         lat2.rotate("y")
+        lat2.move("x", lat2.thick)
         lat2.move("x", jos.length - lat2.thick)
         lat2.move("z", jos.thick)
         self.append(lat2)
@@ -1377,14 +1388,17 @@ class SinkBox(BaseBox):
         legatura.move("z", self.thick_pal)
         legatura.move("y", self.depth - self.thick_pal)
         legatura.rotate("x")
+        legatura.move("y", legatura.thick)
         self.append(legatura)
 
         leg1 = self.get_item_by_type_label("pal", self.label + ".leg1")
         leg1.rotate("x")
+        leg1.move("y", leg1.thick)
         leg1.move("z", self.thick_pal - leg1.width)
 
         leg2 = self.get_item_by_type_label("pal", self.label + ".leg2")
         leg2.rotate("x")
+        leg2.move("y", leg2.thick)
         leg2.move("z", self.thick_pal - leg2.width)
         leg2.move("y", leg2.width - self.thick_pal)
 class TowerBox(corp):
@@ -1502,6 +1516,9 @@ class latura:
         self.label = label
         self.corpuri = []
 
+    def append(self, corp):
+        self.length = self.length + corp.width
+        self.corpuri.append(corp)
 
 class Comanda:
     def __init__(self, client, discount, req):
