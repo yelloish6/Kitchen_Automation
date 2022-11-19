@@ -1,6 +1,13 @@
 # documentation
+"""
+--Comanda (class)
+    corpuri
+    --corp (class) [BaseBox, Raft, Bar, JollyBox, TopBox, SinkBox, TowerBox, MsVBox]
+        material_list
+            --placa (class) [PlacaPal, Front, Pfl, Blat]
+            --accesoriu (class)
 
-
+"""
 # documentation
 import csv
 import math
@@ -74,8 +81,6 @@ class Placa:
 
     def get_m2(self):
         return self.length * self.width / 1000000
-
-
 class PlacaPal(Placa):
 
     def __init__(self, label, length, width, thick, cant_L1, cant_L2, cant_l1, cant_l2):
@@ -117,15 +122,11 @@ class PlacaPal(Placa):
             return self.cant_length[1][1] / 1000
         else:
             raise Exception("ERROR: Unknown cant type!")
-
-
 class Front(Placa):
     def __init__(self, label, length, width, thick):
         super().__init__(label, length, width, thick)
         self.type = "front"
         self.material = ""
-
-
 class Pfl(Placa):
     def __init__(self, label, length, width):
         super().__init__(label, length, width, 4)
@@ -141,8 +142,6 @@ class Pfl(Placa):
         #             # TODO de folosit pretul pe m2 nu pe coala
         #     if not found:
         #         raise NameError("ERROR: Price for " + self.material + " not found. Setting to 0 RON.")
-
-
 class Blat(Placa):
     def __init__(self, label, length, width, thick):
         super().__init__(label, length, width, thick)
@@ -157,7 +156,6 @@ class Blat(Placa):
         #             self.price = float(row["Price"]) * length / 1000
         #     if not found:
         #         raise NameError("ERROR: Price for " + self.material + " not found. Setting to 0 RON.")
-
 
 class accesoriu:
     def __init__(self, name, pieces):
@@ -180,7 +178,6 @@ class accesoriu:
 
     def addPieces(self, number):
         self.pieces = self.pieces + number
-
 
 class corp:
     def __init__(self, label, height, width, depth, rules):
@@ -280,7 +277,7 @@ class corp:
             usa.rotate("x")
             usa.move("x", 2)
             usa.move("z", 2)
-            usa.move("y", -self.thick_front - 100)
+            usa.move("y", -self.thick_front - 1000)
             self.append(usa)
             if tip == "door":
                 if (h * w) > 280000:
@@ -1148,8 +1145,6 @@ class corp:
                       self.arch[i][4] + ox,
                       self.arch[i][5] + oy,
                       self.arch[i][6] + oz)
-
-
 class BaseBox(corp):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1206,8 +1201,6 @@ class BaseBox(corp):
         self.append(blatul)
 
         self.addPFL()
-
-
 class Raft(corp):
     def __init__(self, label, height, width, depth, shelves, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1249,8 +1242,6 @@ class Raft(corp):
         self.addPFL()
 
         self.add_pol(shelves, 2)
-
-
 class Bar(corp):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1280,8 +1271,6 @@ class Bar(corp):
         bl.move("z", self.height - self.thick_blat)
         bl.move("y", -rules["gap_fata"])
         self.append(bl)
-
-
 class JollyBox(BaseBox):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1300,8 +1289,6 @@ class JollyBox(BaseBox):
 
         self.addPFL()
         # self.addFront([[100, 100]], "door")
-
-
 class TopBox(corp):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1337,8 +1324,6 @@ class TopBox(corp):
         self.append(sus)
 
         self.addPFL()
-
-
 class SinkBox(BaseBox):
     def __init__(self, label, height, width, depth, rules):
         super().__init__(label, height, width, depth, rules)
@@ -1364,8 +1349,6 @@ class SinkBox(BaseBox):
         leg2.rotate("x")
         leg2.move("z", self.thick_pal - leg2.width)
         leg2.move("y", leg2.width - self.thick_pal)
-
-
 class TowerBox(corp):
     def __init__(self, label, height, width, depth, rules, gap_list, gap_heat, front_list):
         """
@@ -1454,7 +1437,27 @@ class TowerBox(corp):
         if (front_list[3] == 1) and (front_list[2] == 1):
             self.addFrontManual(self.height - gap_list[0] - gap_list[1] - gap_list[2] - (3.5 * self.thick_pal) - 3,
                                 self.width - 4)
+class MsVBox(corp):
+    def __init__(self, label, height, width, depth, rules):
+        """
 
+        :param label:
+        :param height:
+        :param width:
+        :param depth:
+        :param rules:
+
+        """
+        super().__init__(label, height, width, depth, rules)
+        # self.addAcces("blat",self.width/1000)
+        self.append(accesoriu("sipca apa", self.width / 1000))
+        self.append(accesoriu("plinta", self.width / 1000))
+        self.append(accesoriu("surub intre corpuri", 10))
+        blatul = Blat(self.label + ".blat", self.width, self.width_blat, self.thick_blat)
+        blatul.move("z", self.height)
+        blatul.move("y", -rules["gap_fata"])
+        self.append(blatul)
+        self.add_front([[100, 100]], "door")
 
 class Comanda:
     def __init__(self, client, discount, req):
